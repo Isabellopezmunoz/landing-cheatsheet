@@ -1,0 +1,1313 @@
+---
+import SectionLayout from '../../layouts/SectionLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import InteractionHint from '../../components/InteractionHint.astro'
+
+const subsections = [
+  { id: 'anatomia', label: 'Anatomía' },
+  { id: 'semantica', label: 'Semántica' },
+  { id: 'titulos', label: 'Títulos' },
+  { id: 'texto', label: 'Texto y contenido' },
+  { id: 'listas', label: 'Listas' },
+  { id: 'enlaces', label: 'Enlaces' },
+  { id: 'imagenes', label: 'Imágenes' },
+  { id: 'multimedia', label: 'Multimedia' },
+  { id: 'formularios', label: 'Formularios' },
+  { id: 'interactivos', label: 'Interactivos' },
+  { id: 'tablas', label: 'Tablas' },
+  { id: 'meta', label: 'Meta tags' },
+  { id: 'globales', label: 'Atributos globales' },
+  { id: 'embeds', label: 'Embeds' },
+  { id: 'boilerplate', label: 'Boilerplate' },
+]
+---
+
+<SectionLayout
+  title="HTML · landing-cheatsheet"
+  description="Referencia de HTML moderno para construir landings: semántica, formularios, multimedia, meta tags y más."
+  sectionLabel="HTML"
+  subsections={subsections}
+>
+  <header class="page-header">
+    <p class="page-tag">[ SECCIÓN / HTML ]</p>
+    <h1>HTML</h1>
+    <p class="page-lead">
+      La base estructural de cualquier landing. Bien hecho ahorra trabajo en CSS, mejora la
+      accesibilidad y el SEO sin esfuerzo, y permite usar elementos nativos del navegador (<code
+        >&lt;dialog&gt;</code
+      >, <code>&lt;details&gt;</code>, validación de formularios…) sin JavaScript.
+    </p>
+  </header>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* ANATOMÍA                                                    */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="anatomia" class="subsection">
+    <h2>Anatomía de un documento</h2>
+    <p>
+      Todo HTML moderno arranca igual: <code>&lt;!doctype html&gt;</code>, un <code
+        >&lt;html&gt;</code
+      >
+      con <code>lang</code>, un <code>&lt;head&gt;</code> con metadatos y un <code
+        >&lt;body&gt;</code
+      >
+      con el contenido visible.
+    </p>
+
+    <CodeExample
+      title="Esqueleto mínimo (lo justo para que cuente como HTML moderno)"
+      showCss={false}
+      html={`<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mi landing</title>
+    <meta name="description" content="Resumen claro en 1-2 frases." />
+  </head>
+  <body>
+    <!-- contenido visible -->
+  </body>
+</html>`}
+    />
+
+    <h3>Qué hace cada pieza</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>&lt;!doctype html&gt;</code> — declara HTML5. Sin esto, el navegador entra en "quirks mode"
+        y rompe muchísimo CSS moderno.
+      </li>
+      <li>
+        <code>&lt;html lang="es"&gt;</code> — idioma del documento. Importante para lectores de pantalla,
+        traductores y SEO.
+      </li>
+      <li>
+        <code>&lt;meta charset="utf-8"&gt;</code> — codificación. Tiene que ir lo más arriba posible del
+        <code>&lt;head&gt;</code>.
+      </li>
+      <li>
+        <code>&lt;meta name="viewport"&gt;</code> — responsive en móvil. Sin esto, los móviles renderizan
+        como desktop y reducen.
+      </li>
+      <li><code>&lt;title&gt;</code> — lo que aparece en la pestaña y en Google.</li>
+      <li>
+        <code>&lt;meta name="description"&gt;</code> — el snippet que se ve en buscadores. 50–160 caracteres.
+      </li>
+    </ul>
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Olvidar el <code>lang</code></strong> — los lectores de pantalla pronuncian el texto con
+        fonética inglesa por defecto.
+      </li>
+      <li>
+        <strong>Sin <code>viewport</code></strong> — la landing parece "zoom out" en móvil. El bug más
+        típico al portar desde un template antiguo.
+      </li>
+      <li>
+        <strong><code>&lt;title&gt;</code> genérico</strong> ("Documento sin título", "Home") — mata el
+        SEO. Cada página debe tener su título único.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* SEMÁNTICA                                                   */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="semantica" class="subsection">
+    <h2>Etiquetas semánticas</h2>
+    <p>
+      Usar la etiqueta correcta en lugar de <code>&lt;div&gt;</code> para todo. Los lectores de pantalla
+      pueden saltar entre regiones (<em>"ir al main"</em>, <em>"ir al nav"</em>), Google entiende
+      mejor la estructura, y tú escribes menos clases porque ya hay jerarquía implícita.
+    </p>
+
+    <h3>Las etiquetas de estructura</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>&lt;header&gt;</code> — cabecera. Una global (con logo + nav) y otras locales (la de un
+        <code>&lt;article&gt;</code>, por ejemplo).
+      </li>
+      <li>
+        <code>&lt;nav&gt;</code> — navegación principal. Solo para grupos importantes de enlaces, no para
+        cualquier link.
+      </li>
+      <li>
+        <code>&lt;main&gt;</code> — el contenido principal y único de la página. Solo uno por página.
+      </li>
+      <li>
+        <code>&lt;section&gt;</code> — agrupación temática con título propio. Si no tendría un
+        <code>&lt;h2&gt;</code>, probablemente quieres un <code>&lt;div&gt;</code>.
+      </li>
+      <li>
+        <code>&lt;article&gt;</code> — contenido autocontenido que tendría sentido fuera de la página
+        (un post, una card de feature, un testimonial).
+      </li>
+      <li>
+        <code>&lt;aside&gt;</code> — contenido relacionado pero tangencial (callouts, sidebars, publi).
+      </li>
+      <li><code>&lt;footer&gt;</code> — pie. También una global y posibles locales.</li>
+    </ul>
+
+    <CodeExample
+      title="Landing entera estructurada semánticamente"
+      showCss={false}
+      html={`<body>
+  <header>
+    <a href="/">Logo</a>
+    <nav aria-label="Principal">
+      <a href="/precios">Precios</a>
+      <a href="/contacto">Contacto</a>
+    </nav>
+  </header>
+
+  <main>
+    <section aria-labelledby="hero-titulo">
+      <h1 id="hero-titulo">Título del hero</h1>
+      <p>Subtítulo claro y corto.</p>
+    </section>
+
+    <section aria-labelledby="features-titulo">
+      <h2 id="features-titulo">Por qué nos eligen</h2>
+      <article>
+        <h3>Rápido</h3>
+        <p>Carga en menos de 1s.</p>
+      </article>
+      <article>
+        <h3>Accesible</h3>
+        <p>Cumple WCAG AA.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Mi marca</p>
+  </footer>
+</body>`}
+    />
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Más de un <code>&lt;main&gt;</code></strong> — solo puede haber uno por página.
+      </li>
+      <li>
+        <strong><code>&lt;section&gt;</code> sin título</strong> — pierde sentido semántico. Si no tiene
+        un encabezado, usa <code>&lt;div&gt;</code>.
+      </li>
+      <li>
+        <strong>Múltiples <code>&lt;nav&gt;</code> sin <code>aria-label</code></strong> — los lectores
+        de pantalla no distinguen cuál es cuál. Pon <code>aria-label="Principal"</code>,
+        <code>"Footer"</code>, <code>"Breadcrumbs"</code>...
+      </li>
+      <li>
+        <strong>Confundir <code>&lt;section&gt;</code> y <code>&lt;article&gt;</code></strong> — si el
+        bloque tendría sentido publicado en otro sitio (un post, una card que se reutiliza), es un <code
+          >&lt;article&gt;</code
+        >.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* TÍTULOS                                                     */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="titulos" class="subsection">
+    <h2>Jerarquía de títulos</h2>
+    <p>
+      Los <code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code> son la TOC de tu página. Un lector de pantalla
+      puede listar todos los títulos y navegar saltando entre ellos. Si los usas mal, pierdes esa navegación.
+    </p>
+
+    <h3>Reglas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Una sola <code>&lt;h1&gt;</code> por página</strong>, normalmente el título del
+        hero.
+      </li>
+      <li>
+        <strong>No te saltes niveles</strong> bajando: después de un <code>&lt;h2&gt;</code>, los
+        hijos son <code>&lt;h3&gt;</code>, no <code>&lt;h4&gt;</code>.
+      </li>
+      <li>
+        Para estilizar texto grande que <em>no es un título</em>, usa una clase (<code
+          >.display-text</code
+        >), no un <code>&lt;h1&gt;</code> falso.
+      </li>
+      <li>
+        Si te hace falta un encabezado decorativo (un eyebrow tipo "[ FEATURES ]"), va en un
+        <code>&lt;p&gt;</code> con clase, no en un heading.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Hero con eyebrow + h1 (eyebrow NO es un heading)"
+      html={`<section class="hero">
+  <p class="eyebrow">[ HERO ]</p>
+  <h1>Construye landings rápido</h1>
+  <p class="sub">Una herramienta, todo el día.</p>
+</section>`}
+      css={`.hero {
+  padding: 24px;
+  background: #0d0f0d;
+  color: #e8e8e3;
+  font-family: sans-serif;
+}
+.eyebrow {
+  color: #6dff8a;
+  font-family: monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  margin: 0 0 8px;
+}
+.hero h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+}
+.sub { color: #8a8a85; margin: 8px 0 0; font-size: 14px; }`}
+    />
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* TEXTO Y CONTENIDO                                           */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="texto" class="subsection">
+    <h2>Texto y contenido</h2>
+    <p>
+      HTML tiene muchas etiquetas de texto, casi todas con un significado semántico concreto. Elegir
+      la correcta da estilo "gratis" + accesibilidad + SEO.
+    </p>
+
+    <h3>Énfasis: <code>strong</code>/<code>em</code> vs <code>b</code>/<code>i</code></h3>
+    <ul class="bullet-list">
+      <li>
+        <code>&lt;strong&gt;</code> — <strong>importancia</strong>. El lector de pantalla puede
+        enfatizar. Visualmente en negrita por defecto.
+      </li>
+      <li>
+        <code>&lt;em&gt;</code> — <em>énfasis</em> que cambia el sentido. Cursiva por defecto.
+      </li>
+      <li>
+        <code>&lt;b&gt;</code> — solo visualmente en negrita, sin importancia añadida (p. ej. keywords
+        introducidas por primera vez).
+      </li>
+      <li>
+        <code>&lt;i&gt;</code> — solo visualmente en cursiva, sin énfasis (nombres científicos, términos
+        en otro idioma).
+      </li>
+    </ul>
+
+    <p>
+      <strong>En la práctica para landings</strong>: usa <code>&lt;strong&gt;</code> y
+      <code>&lt;em&gt;</code>. <code>&lt;b&gt;</code>/<code>&lt;i&gt;</code> casi nunca son lo que buscas.
+    </p>
+
+    <h3>Otras etiquetas útiles</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>&lt;mark&gt;</code> — texto resaltado (resultados de búsqueda, callouts).
+      </li>
+      <li><code>&lt;small&gt;</code> — letra pequeña / aclaraciones legales.</li>
+      <li>
+        <code>&lt;abbr title="..."&gt;</code> — abreviaturas con tooltip nativo. Útil para siglas.
+      </li>
+      <li>
+        <code>&lt;time datetime="2026-01-15"&gt;</code> — fechas legibles por máquina. Bueno para SEO
+        y para sortear con JS.
+      </li>
+      <li><code>&lt;kbd&gt;</code> — combinación de teclas (<kbd>Cmd</kbd> + <kbd>K</kbd>).</li>
+      <li><code>&lt;code&gt;</code> / <code>&lt;pre&gt;</code> — código inline / en bloque.</li>
+      <li>
+        <code>&lt;blockquote&gt;</code> + <code>&lt;cite&gt;</code> — citas (testimonios en landings).
+      </li>
+    </ul>
+
+    <CodeExample
+      title="En landing: testimonial semánticamente correcto"
+      html={`<blockquote class="quote">
+  <p>"Una landing en una tarde, sin volverme loca."</p>
+  <footer>— <cite>Isabel L., dev</cite></footer>
+</blockquote>`}
+      css={`.quote {
+  background: #1c1f23;
+  border-left: 4px solid #6dff8a;
+  padding: 16px 20px;
+  margin: 0;
+  color: #e8e8e3;
+  font-family: sans-serif;
+}
+.quote p { margin: 0 0 8px; font-style: italic; }
+.quote footer { color: #8a8a85; font-size: 13px; }
+.quote cite { font-style: normal; }`}
+    />
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* LISTAS                                                      */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="listas" class="subsection">
+    <h2>Listas</h2>
+    <p>
+      Tres tipos de listas. Elegir la correcta importa para lectores de pantalla, que las anuncian
+      como "lista con N elementos".
+    </p>
+
+    <h3>Tipos</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>&lt;ul&gt;</code> — sin orden. Features, beneficios, navegaciones.
+      </li>
+      <li>
+        <code>&lt;ol&gt;</code> — con orden. Pasos, rankings. Atributos modernos:
+        <code>start="3"</code>, <code>reversed</code>, <code>type="A"</code>.
+      </li>
+      <li>
+        <code>&lt;dl&gt;</code> con <code>&lt;dt&gt;</code> (término) y <code>&lt;dd&gt;</code>
+        (descripción) — lista de definiciones. Perfecto para FAQs y para metadatos clave-valor.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="En landing: FAQ semántico con <dl>"
+      html={`<dl class="faq">
+  <dt>¿Cuánto cuesta?</dt>
+  <dd>Gratis para uso personal.</dd>
+
+  <dt>¿Funciona offline?</dt>
+  <dd>Sí, todo se ejecuta en tu navegador.</dd>
+</dl>`}
+      css={`.faq {
+  background: #1c1f23;
+  padding: 16px 20px;
+  font-family: sans-serif;
+  color: #e8e8e3;
+}
+.faq dt {
+  color: #6dff8a;
+  font-family: monospace;
+  font-size: 13px;
+  margin-block-start: 12px;
+}
+.faq dt:first-child { margin-block-start: 0; }
+.faq dd {
+  margin: 4px 0 0;
+  color: #8a8a85;
+  font-size: 14px;
+}`}
+    />
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        Usar <code>&lt;br&gt;</code> entre items en lugar de una lista — pierdes la semántica.
+      </li>
+      <li>
+        Listas dentro de párrafos. Una <code>&lt;ul&gt;</code> no es contenido inline; va al mismo nivel
+        que el <code>&lt;p&gt;</code>.
+      </li>
+      <li>
+        Safari quita el rol de lista cuando le pones <code>list-style: none</code> — fix:
+        <code>role="list"</code> en el <code>&lt;ul&gt;</code> + <code>list-style: none</code> en CSS.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* ENLACES                                                     */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="enlaces" class="subsection">
+    <h2>Enlaces</h2>
+    <p>
+      <code>&lt;a href&gt;</code> es la pieza más usada de la web. Hay matices importantes con enlaces
+      externos, anclas internas y protocolos especiales.
+    </p>
+
+    <h3>Tipos de <code>href</code></h3>
+    <ul class="bullet-list">
+      <li><code>href="/precios"</code> — interno absoluto.</li>
+      <li><code>href="./contacto"</code> — interno relativo.</li>
+      <li>
+        <code>href="https://otra.com"</code> — externo. Usa <code>target="_blank"</code>
+        <strong>con</strong>
+        <code>rel="noopener noreferrer"</code>.
+      </li>
+      <li><code>href="#features"</code> — ancla interna a un id de la misma página.</li>
+      <li><code>href="mailto:hola@ej.com"</code> — abre el cliente de email.</li>
+      <li><code>href="tel:+34666666666"</code> — llamada en móvil.</li>
+      <li>
+        <code>href="/file.pdf" download</code> — fuerza descarga en lugar de navegación.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Tipos de enlace, todos accesibles"
+      html={`<nav class="links">
+  <a href="/precios">Precios</a>
+  <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+    GitHub <span aria-hidden="true">↗</span>
+  </a>
+  <a href="mailto:hola@ejemplo.com">Email</a>
+  <a href="#contacto">Saltar a contacto</a>
+</nav>`}
+      css={`.links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-family: monospace;
+}
+.links a {
+  color: #6dff8a;
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 150ms ease;
+}
+.links a:hover { border-color: #6dff8a; }`}
+    />
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong><code>target="_blank"</code> sin <code>rel="noopener"</code></strong> — la página destino
+        puede manipular tu pestaña original (<code>window.opener</code>). Riesgo de seguridad. Hoy
+        los navegadores modernos lo aplican implícito, pero es buena práctica ponerlo.
+      </li>
+      <li>
+        <strong>Enlaces con solo "Aquí" / "Más info"</strong> — los lectores de pantalla los anuncian
+        sueltos. Pon texto descriptivo: <em>"Ver precios"</em>, <em>"Leer el caso de estudio"</em>.
+      </li>
+      <li>
+        <strong>Iconos sin alternativa</strong> — un <code>↗</code> con
+        <code>aria-hidden="true"</code> está bien si el texto del enlace ya lo describe; si no, añade
+        texto invisible para lectores de pantalla.
+      </li>
+      <li>
+        <strong>Botones que en realidad son enlaces</strong> — si navega (cambia URL), es
+        <code>&lt;a&gt;</code>. Si dispara una acción, es <code>&lt;button&gt;</code>.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* IMÁGENES                                                    */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="imagenes" class="subsection">
+    <h2>Imágenes</h2>
+    <p>
+      Lo que separa una landing rápida de una landing pesada. Las imágenes mal puestas son la causa
+      #1 de bajo Lighthouse en landings.
+    </p>
+
+    <h3>Atributos clave de <code>&lt;img&gt;</code></h3>
+    <ul class="bullet-list">
+      <li>
+        <code>src</code> — la URL. Usa formatos modernos: <strong>WebP</strong> o
+        <strong>AVIF</strong>.
+      </li>
+      <li>
+        <code>alt</code> — descripción. <strong>Siempre obligatorio</strong>. Imagen decorativa →
+        <code>alt=""</code> (vacío, no omitido).
+      </li>
+      <li>
+        <code>width</code> / <code>height</code> — siempre, aunque los pises con CSS. Evitan layout shift
+        (CLS) mientras la imagen carga.
+      </li>
+      <li>
+        <code>loading="lazy"</code> — carga diferida. <strong>NO</strong> en la imagen above-the-fold
+        (la del hero) — ahí usa <code>loading="eager"</code> (default) y considera
+        <code>fetchpriority="high"</code>.
+      </li>
+      <li><code>decoding="async"</code> — no bloquea el render.</li>
+    </ul>
+
+    <CodeExample
+      title="Imagen óptima en landing (above-the-fold + below)"
+      showCss={false}
+      html={`<!-- Hero: carga inmediata + alta prioridad -->
+<img
+  src="/hero.webp"
+  alt="Captura del producto en acción"
+  width="1280"
+  height="720"
+  fetchpriority="high"
+/>
+
+<!-- Más abajo: lazy + async -->
+<img
+  src="/feature.webp"
+  alt=""
+  width="600"
+  height="400"
+  loading="lazy"
+  decoding="async"
+/>`}
+    />
+
+    <h3><code>srcset</code> + <code>sizes</code> — la misma imagen, varios tamaños</h3>
+    <p>El navegador elige la mejor versión según el viewport. Reduce mucho el peso en móvil.</p>
+
+    <CodeExample
+      title="Imagen responsive con srcset"
+      showCss={false}
+      html={`<img
+  src="/hero-800.webp"
+  srcset="
+    /hero-400.webp  400w,
+    /hero-800.webp  800w,
+    /hero-1600.webp 1600w
+  "
+  sizes="(min-width: 1024px) 800px, 100vw"
+  alt="..."
+  width="800"
+  height="450"
+/>`}
+    />
+
+    <h3><code>&lt;picture&gt;</code> — fuentes alternativas (art direction, WebP/AVIF)</h3>
+
+    <CodeExample
+      title="Servir AVIF con fallback WebP y JPG"
+      showCss={false}
+      html={`<picture>
+  <source type="image/avif" srcset="/hero.avif" />
+  <source type="image/webp" srcset="/hero.webp" />
+  <img src="/hero.jpg" alt="..." width="1280" height="720" />
+</picture>`}
+    />
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Sin <code>width</code>/<code>height</code></strong> — layout shift. Lighthouse te castiga.
+      </li>
+      <li>
+        <strong><code>loading="lazy"</code> en el hero</strong> — retrasa el LCP. Solo lazy para imágenes
+        que NO se ven al cargar.
+      </li>
+      <li>
+        <strong>SVG decorativo con <code>alt</code> textual</strong> — un icono <code>↗</code>
+        leído por un screen reader es ruido. <code>alt=""</code> + <code>aria-hidden="true"</code>.
+      </li>
+      <li>
+        <strong>Imagen de fondo importante en CSS</strong> — pierde SEO y no tiene alt. Si la imagen tiene
+        significado, va en <code>&lt;img&gt;</code>.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* MULTIMEDIA                                                  */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="multimedia" class="subsection">
+    <h2>Multimedia: <code>&lt;video&gt;</code> y <code>&lt;audio&gt;</code></h2>
+    <p>Vídeo nativo del navegador, sin librerías. Suficiente para 95% de las landings.</p>
+
+    <h3>Atributos clave</h3>
+    <ul class="bullet-list">
+      <li><code>controls</code> — muestra los controles del navegador.</li>
+      <li>
+        <code>poster="..."</code> — imagen mientras no se reproduce. Imprescindible para que el vídeo
+        no se vea negro al cargar.
+      </li>
+      <li><code>preload="metadata"</code> — solo carga metadata (duración, dimensiones).</li>
+      <li>
+        <code>muted</code>, <code>autoplay</code>, <code>loop</code>, <code>playsinline</code> — para
+        vídeos de fondo decorativos en heroes. <strong>Autoplay solo funciona si está muted</strong
+        >.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Vídeo de hero de fondo (autoplay + muted + loop)"
+      showCss={false}
+      html={`<video
+  poster="/hero-poster.webp"
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="metadata"
+>
+  <source src="/hero.webm" type="video/webm" />
+  <source src="/hero.mp4" type="video/mp4" />
+  Tu navegador no soporta vídeo.
+</video>`}
+    />
+
+    <h3>Subtítulos con <code>&lt;track&gt;</code></h3>
+    <p>
+      Accesibilidad básica para vídeos con voz. <code>kind="captions"</code> para sordos,
+      <code>kind="subtitles"</code> para traducciones.
+    </p>
+
+    <CodeExample
+      title="Vídeo con subtítulos"
+      showCss={false}
+      html={`<video controls poster="/poster.webp">
+  <source src="/demo.mp4" type="video/mp4" />
+  <track
+    kind="captions"
+    src="/demo-es.vtt"
+    srclang="es"
+    label="Español"
+    default
+  />
+</video>`}
+    />
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Autoplay sin <code>muted</code></strong> — el navegador lo bloquea. Siempre los dos juntos.
+      </li>
+      <li>
+        <strong>Sin <code>playsinline</code> en móvil iOS</strong> — el vídeo se abre fullscreen al reproducir.
+        Rompe los heroes de fondo.
+      </li>
+      <li>
+        <strong>MP4 como única fuente</strong> — WebM es más ligero. Sirve los dos con
+        <code>&lt;source&gt;</code>.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* FORMULARIOS                                                 */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="formularios" class="subsection">
+    <h2>Formularios</h2>
+    <p>
+      HTML moderno trae mucho gratis: validación, teclados específicos en móvil, autocompletado.
+      Bien hecho, no necesitas librerías para la mayoría de landings.
+    </p>
+
+    <h3><code>&lt;label&gt;</code> asociado al input — siempre</h3>
+    <p>
+      Cada input necesita una label asociada por <code>for=id</code>, o anidando el input dentro del
+      label. Sin esto, el formulario no es accesible y los clicks no enfocan el campo.
+    </p>
+
+    <CodeExample
+      title="Las dos formas correctas de asociar label e input"
+      showCss={false}
+      html={`<!-- Forma 1: for + id -->
+<label for="email-1">Email</label>
+<input id="email-1" type="email" name="email" />
+
+<!-- Forma 2: anidado (no necesita id) -->
+<label>
+  Email
+  <input type="email" name="email" />
+</label>`}
+    />
+
+    <h3>Input types modernos (teclado y validación gratis)</h3>
+    <ul class="bullet-list">
+      <li><code>email</code> — valida formato + teclado @ en móvil.</li>
+      <li><code>tel</code> — teclado numérico en móvil.</li>
+      <li><code>url</code> — valida URL + teclado con .com.</li>
+      <li>
+        <code>number</code> — incremento/decremento, <code>min</code>/<code>max</code>/<code
+          >step</code
+        >.
+      </li>
+      <li><code>date</code>, <code>time</code>, <code>month</code> — datepickers nativos.</li>
+      <li><code>color</code> — color picker nativo.</li>
+      <li><code>search</code> — incluye botón "limpiar" en algunos navegadores.</li>
+      <li><code>file</code> — selector de archivos; añade <code>accept="image/*"</code>.</li>
+    </ul>
+
+    <h3>Atributos clave</h3>
+    <ul class="bullet-list">
+      <li><code>required</code> — validación HTML nativa.</li>
+      <li><code>pattern="..."</code> — regex de validación.</li>
+      <li>
+        <code>autocomplete</code> — autocompleta el campo. Valores específicos:
+        <code>email</code>, <code>name</code>, <code>tel</code>, <code>postal-code</code>,
+        <code>cc-number</code>... Importantísimo para conversión.
+      </li>
+      <li>
+        <code>inputmode</code> — fuerza un teclado específico en móvil sin cambiar el tipo (<code
+          >numeric</code
+        >, <code>decimal</code>, <code>email</code>).
+      </li>
+      <li>
+        <code>placeholder</code> — texto guía. <strong>No sustituye a la label</strong>.
+      </li>
+      <li>
+        <code>minlength</code> / <code>maxlength</code> — longitudes mínima/máxima.
+      </li>
+    </ul>
+
+    <InteractionHint>Haz click en cada campo y prueba a enviar sin completar.</InteractionHint>
+
+    <CodeExample
+      title="En landing: form de suscripción accesible y con validación nativa"
+      height="320px"
+      html={`<form class="signup">
+  <div class="field">
+    <label for="name">Nombre</label>
+    <input
+      id="name"
+      name="name"
+      type="text"
+      autocomplete="name"
+      required
+    />
+  </div>
+  <div class="field">
+    <label for="email">Email</label>
+    <input
+      id="email"
+      name="email"
+      type="email"
+      autocomplete="email"
+      inputmode="email"
+      required
+    />
+  </div>
+  <button type="submit">Suscribirme</button>
+</form>`}
+      css={`.signup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+  font-family: monospace;
+  color: #e8e8e3;
+  max-width: 320px;
+}
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 12px; color: #8a8a85; }
+.field input {
+  padding: 8px 12px;
+  background: #15171a;
+  color: #e8e8e3;
+  border: 1px solid #2a2d31;
+  font-family: monospace;
+  transition: border-color 200ms ease;
+}
+.field input:hover { border-color: #8a8a85; }
+.field input:focus-visible {
+  outline: none;
+  border-color: #6dff8a;
+  box-shadow: 0 0 0 2px rgba(109, 255, 138, 0.2);
+}
+.field input:invalid:not(:placeholder-shown) {
+  border-color: #ff6b6b;
+}
+.signup button {
+  padding: 10px 16px;
+  background: #6dff8a;
+  color: #0d0f0d;
+  border: none;
+  font-family: monospace;
+  font-weight: bold;
+  cursor: pointer;
+}`}
+    />
+
+    <h3>Otros elementos de formulario</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>&lt;textarea&gt;</code> — texto multilínea. Atributo <code>rows</code> para altura inicial.
+      </li>
+      <li>
+        <code>&lt;select&gt;</code> con <code>&lt;option&gt;</code> y <code>&lt;optgroup&gt;</code>
+        — desplegables. En móvil sale el picker nativo.
+      </li>
+      <li>
+        <code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code> — agrupa campos relacionados. Especialmente
+        para grupos de radios o checkboxes.
+      </li>
+      <li>
+        <code>&lt;button type="submit|reset|button"&gt;</code> — <strong>siempre</strong> pon el type.
+        El default es <code>submit</code>, lo que dispara envío por error en buttons intermedios.
+      </li>
+    </ul>
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Placeholder en vez de label</strong> — desaparece al escribir y se pierde accesibilidad.
+      </li>
+      <li>
+        <strong>Sin <code>autocomplete</code></strong> — el usuario tiene que escribir su email cada vez.
+        Tu tasa de conversión sufre.
+      </li>
+      <li>
+        <strong><code>&lt;button&gt;</code> dentro de un form sin <code>type</code></strong> — es submit
+        por defecto. Pon <code>type="button"</code> en los que no envían.
+      </li>
+      <li>
+        <strong>Validar con JS sin usar <code>required</code></strong> — pierdes la validación nativa
+        y la integración con <code>:invalid</code> en CSS.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* ELEMENTOS INTERACTIVOS                                      */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="interactivos" class="subsection">
+    <h2>Elementos interactivos nativos</h2>
+    <p>
+      HTML tiene componentes interactivos sin JavaScript: accordions, modales, barras de progreso.
+      Úsalos antes de buscar librerías.
+    </p>
+
+    <h3><code>&lt;details&gt;</code> + <code>&lt;summary&gt;</code> — accordion sin JS</h3>
+
+    <InteractionHint>Haz click en las preguntas para abrir/cerrar las respuestas.</InteractionHint>
+
+    <CodeExample
+      title="En landing: FAQ con accordion nativo"
+      html={`<details class="faq-item">
+  <summary>¿Cuánto cuesta?</summary>
+  <p>Gratis para uso personal.</p>
+</details>
+<details class="faq-item">
+  <summary>¿Funciona offline?</summary>
+  <p>Sí, todo se ejecuta en tu navegador.</p>
+</details>`}
+      css={`.faq-item {
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+  padding: 12px 16px;
+  margin-block-end: 8px;
+  font-family: monospace;
+  color: #e8e8e3;
+}
+.faq-item summary {
+  cursor: pointer;
+  color: #6dff8a;
+  font-size: 14px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.faq-item summary::before {
+  content: '+';
+  font-weight: bold;
+  transition: transform 200ms ease;
+}
+.faq-item[open] summary::before {
+  content: '−';
+}
+.faq-item p {
+  margin: 12px 0 0;
+  color: #8a8a85;
+  font-size: 13px;
+}`}
+    />
+
+    <h3><code>&lt;dialog&gt;</code> — modal nativo con foco-trap incluido</h3>
+    <p>
+      Soporta dos modos: <code>open</code> (popup en línea) y <code>showModal()</code> (modal con backdrop).
+      Estilando <code>::backdrop</code> personalizas el fondo.
+    </p>
+
+    <CodeExample
+      title="Modal nativo accesible"
+      showCss={false}
+      html={`<button onclick="document.getElementById('modal').showModal()">
+  Abrir modal
+</button>
+
+<dialog id="modal">
+  <h2>Título</h2>
+  <p>Contenido del modal.</p>
+  <form method="dialog">
+    <button>Cerrar</button>
+  </form>
+</dialog>
+
+<style>
+  dialog::backdrop {
+    background: rgba(13, 15, 13, 0.7);
+    backdrop-filter: blur(4px);
+  }
+</style>`}
+    />
+
+    <h3><code>&lt;progress&gt;</code> y <code>&lt;meter&gt;</code></h3>
+    <ul class="bullet-list">
+      <li>
+        <code>&lt;progress value="60" max="100"&gt;</code> — barra de progreso de una tarea (carga, scroll).
+      </li>
+      <li>
+        <code>&lt;meter value="0.7"&gt;</code> — medida en un rango fijo (uso de disco, rating).
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* TABLAS                                                      */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="tablas" class="subsection">
+    <h2>Tablas</h2>
+    <p>
+      Solo para <strong>datos tabulares</strong> (precios comparativos, specs). <em>Nunca</em> para layout.
+      En landings la más típica es la tabla de planes/precios.
+    </p>
+
+    <h3>Estructura semántica</h3>
+    <ul class="bullet-list">
+      <li><code>&lt;caption&gt;</code> — título de la tabla.</li>
+      <li>
+        <code>&lt;thead&gt;</code> / <code>&lt;tbody&gt;</code> / <code>&lt;tfoot&gt;</code> — agrupaciones.
+      </li>
+      <li>
+        <code>&lt;th scope="col|row"&gt;</code> — celdas de encabezado. <code>scope</code> es importantísimo
+        para accesibilidad.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="En landing: tabla comparativa de planes"
+      html={`<table class="pricing">
+  <caption>Comparativa de planes</caption>
+  <thead>
+    <tr>
+      <th scope="col">Feature</th>
+      <th scope="col">Free</th>
+      <th scope="col">Pro</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Proyectos</th>
+      <td>3</td>
+      <td>Ilimitados</td>
+    </tr>
+    <tr>
+      <th scope="row">Soporte</th>
+      <td>—</td>
+      <td>24/7</td>
+    </tr>
+  </tbody>
+</table>`}
+      css={`.pricing {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: monospace;
+  color: #e8e8e3;
+  font-size: 14px;
+}
+.pricing caption {
+  text-align: start;
+  color: #6dff8a;
+  font-size: 12px;
+  padding-block-end: 8px;
+}
+.pricing th, .pricing td {
+  padding: 10px 12px;
+  text-align: start;
+  border-bottom: 1px solid #2a2d31;
+}
+.pricing thead th { color: #6dff8a; }
+.pricing tbody th { color: #8a8a85; font-weight: normal; }`}
+    />
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* META TAGS                                                   */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="meta" class="subsection">
+    <h2>Meta tags esenciales</h2>
+    <p>
+      Las meta tags del <code>&lt;head&gt;</code> definen cómo se comporta y se ve la página en buscadores,
+      móviles, y compartida. Las imprescindibles para una landing:
+    </p>
+
+    <CodeExample
+      title="Set mínimo + recomendado para una landing"
+      showCss={false}
+      html={`<head>
+  <!-- IMPRESCINDIBLES -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marca · Producto que resuelve X</title>
+  <meta name="description" content="Frase clara en 50–160 caracteres." />
+
+  <!-- RECOMENDADOS -->
+  <meta name="theme-color" content="#0d0f0d" />
+  <meta name="color-scheme" content="dark light" />
+  <link rel="canonical" href="https://miweb.com/" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>`}
+    />
+
+    <h3>Qué hace cada una</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>theme-color</code> — color de la barra del navegador en móvil (Chrome Android, Safari iOS).
+      </li>
+      <li>
+        <code>color-scheme</code> — indica al navegador que la página soporta light/dark, ajusta scrollbars
+        y form controls.
+      </li>
+      <li>
+        <code>canonical</code> — URL "oficial" de esta página. Evita problemas de SEO con duplicados (con/sin
+        <code>www</code>, con/sin <code>?utm</code>).
+      </li>
+      <li>
+        <code>robots</code> — control de indexación. <code>content="noindex"</code> para páginas que NO
+        quieres en Google (gracias, política de privacidad).
+      </li>
+    </ul>
+
+    <p>
+      Las meta tags de <strong>Open Graph</strong> y <strong>Twitter Card</strong> (las que controlan
+      la preview al compartir) las cubre la sección <code>/seo</code>.
+    </p>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* ATRIBUTOS GLOBALES                                          */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="globales" class="subsection">
+    <h2>Atributos globales</h2>
+    <p>
+      Atributos que funcionan en <strong>cualquier</strong> elemento HTML. Los más útiles para landings:
+    </p>
+
+    <ul class="bullet-list">
+      <li><code>id</code> — identificador único. Para anclas, labels, JS.</li>
+      <li><code>class</code> — clases CSS.</li>
+      <li>
+        <code>data-*</code> — atributos custom (<code>data-tab</code>, <code>data-loading</code>).
+        Accesibles desde JS con <code>element.dataset.tab</code>.
+      </li>
+      <li>
+        <code>hidden</code> — oculta el elemento (equivale a <code>display: none</code>). Más
+        semántico que una clase.
+      </li>
+      <li>
+        <code>inert</code> — desactiva todo el subárbol (clicks y foco). Modernísimo, perfecto para deshabilitar
+        paneles cerrados de un tab.
+      </li>
+      <li>
+        <code>tabindex="0"</code> — hace que un elemento no-interactivo reciba foco.
+        <code>tabindex="-1"</code> — quita del orden de tab pero permite foco con JS.
+      </li>
+      <li>
+        <code>contenteditable</code> — texto editable in-line.
+      </li>
+      <li>
+        <code>lang</code> — sobreescribe el idioma del documento en un subárbol (cita en otro idioma).
+      </li>
+      <li><code>dir="rtl"</code> — dirección de lectura derecha a izquierda.</li>
+      <li>
+        <code>title</code> — tooltip nativo al hover. Útil pero no accesible por teclado, no es sustituto
+        de label.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Tabs con data-* + inert (sin librerías)"
+      showCss={false}
+      html={`<div class="tabs">
+  <button data-tab="info" aria-selected="true">Info</button>
+  <button data-tab="docs" aria-selected="false">Docs</button>
+
+  <section data-panel="info">Contenido info</section>
+  <section data-panel="docs" inert hidden>Contenido docs</section>
+</div>`}
+    />
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* EMBEDS                                                      */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="embeds" class="subsection">
+    <h2>Embeds: <code>&lt;iframe&gt;</code> y <code>&lt;svg&gt;</code></h2>
+
+    <h3><code>&lt;iframe&gt;</code> con seguridad y performance</h3>
+    <p>Para insertar YouTube, Vimeo, mapas. Hay que usarlo con cuidado:</p>
+    <ul class="bullet-list">
+      <li>
+        <code>loading="lazy"</code> — fundamental. Un iframe de YouTube puede pesar 500kb+.
+      </li>
+      <li>
+        <code>sandbox="..."</code> — restringe lo que puede hacer (sin <code>allow-scripts</code>,
+        no ejecuta JS).
+      </li>
+      <li>
+        <code>allow="..."</code> — permite features específicas (cámara, micro, pantalla completa).
+      </li>
+      <li>
+        <code>title="..."</code> — descripción accesible. Sin esto, el lector dice solo "iframe".
+      </li>
+      <li><code>referrerpolicy="no-referrer"</code> — privacidad.</li>
+    </ul>
+
+    <CodeExample
+      title="Embed de YouTube con buenas prácticas"
+      showCss={false}
+      html={`<iframe
+  src="https://www.youtube.com/embed/VIDEO_ID"
+  title="Demo del producto"
+  loading="lazy"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+  referrerpolicy="strict-origin-when-cross-origin"
+></iframe>`}
+    />
+
+    <h3><code>&lt;svg&gt;</code> inline vs <code>&lt;img src="..."&gt;</code></h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>SVG inline</strong> — se puede estilar con CSS (color, animaciones, hover). Ideal para
+        iconos.
+      </li>
+      <li>
+        <strong>SVG en <code>&lt;img&gt;</code></strong> — más sencillo, no se puede estilar. Bueno para
+        logos e ilustraciones complejas.
+      </li>
+      <li>
+        SVG decorativo siempre con <code>aria-hidden="true"</code>; SVG con significado, con
+        <code>role="img"</code> + <code>&lt;title&gt;</code> dentro.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Icono SVG inline que hereda el color del padre"
+      html={`<button class="icon-btn">
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+    <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+  Empezar
+</button>`}
+      css={`.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #6dff8a;
+  border: 1px solid #6dff8a;
+  padding: 8px 16px;
+  font-family: monospace;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+.icon-btn:hover {
+  background: rgba(109, 255, 138, 0.1);
+}`}
+    />
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* BOILERPLATE                                                 */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="boilerplate" class="subsection">
+    <h2>Boilerplate completo de una landing</h2>
+    <p>
+      El esqueleto end-to-end de una landing con todo bien hecho — semántica, meta tags, formulario
+      accesible, jerarquía de títulos correcta. Listo para copiar y partir desde aquí.
+    </p>
+
+    <CodeExample
+      title="Landing entera, copiable de principio a fin"
+      showCss={false}
+      html={`<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Marca · Producto que resuelve X</title>
+    <meta name="description" content="Frase clara en 50–160 caracteres." />
+    <meta name="theme-color" content="#0d0f0d" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="canonical" href="https://miweb.com/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph (cuando compartas) -->
+    <meta property="og:title" content="..." />
+    <meta property="og:description" content="..." />
+    <meta property="og:image" content="/og.png" />
+    <meta property="og:url" content="https://miweb.com/" />
+  </head>
+
+  <body>
+    <header>
+      <a href="/" aria-label="Inicio">Logo</a>
+      <nav aria-label="Principal">
+        <a href="#features">Features</a>
+        <a href="#precios">Precios</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </header>
+
+    <main>
+      <section aria-labelledby="hero-titulo">
+        <p>[ HERO ]</p>
+        <h1 id="hero-titulo">Tu propuesta de valor en una línea</h1>
+        <p>Subtítulo que añade contexto en 1-2 frases.</p>
+        <a href="#cta" class="btn-primary">Empezar gratis</a>
+      </section>
+
+      <section id="features" aria-labelledby="features-titulo">
+        <h2 id="features-titulo">Por qué nos eligen</h2>
+        <article>
+          <h3>Feature 1</h3>
+          <p>Explicación corta.</p>
+        </article>
+        <article>
+          <h3>Feature 2</h3>
+          <p>Explicación corta.</p>
+        </article>
+      </section>
+
+      <section id="precios" aria-labelledby="precios-titulo">
+        <h2 id="precios-titulo">Precios</h2>
+        <table>
+          <caption>Comparativa de planes</caption>
+          <thead>
+            <tr><th scope="col">Feature</th><th scope="col">Free</th><th scope="col">Pro</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Proyectos</th><td>3</td><td>Ilimitados</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="faq" aria-labelledby="faq-titulo">
+        <h2 id="faq-titulo">Preguntas frecuentes</h2>
+        <details>
+          <summary>¿Cuánto cuesta?</summary>
+          <p>Gratis para uso personal.</p>
+        </details>
+      </section>
+
+      <section id="contacto" aria-labelledby="contacto-titulo">
+        <h2 id="contacto-titulo">Apúntate a la lista</h2>
+        <form>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required />
+          <button type="submit">Suscribirme</button>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <nav aria-label="Footer">
+        <a href="/privacidad">Privacidad</a>
+        <a href="/terminos">Términos</a>
+      </nav>
+      <p>© 2026 Mi marca</p>
+    </footer>
+  </body>
+</html>`}
+    />
+
+    <p>
+      Cuando arranques una landing nueva, parte de aquí. Quita lo que no necesites; añade variables
+      y estilos por encima.
+    </p>
+  </section>
+</SectionLayout>
