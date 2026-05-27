@@ -1,0 +1,99 @@
+/*
+ * FOUNDATIONS
+ * Tokens de diseño globales. Dos capas:
+ *   1. Paleta cruda (--color-*): los valores reales (HEX, rem, etc).
+ *   2. Roles semánticos (--bg, --fg, --accent...): qué uso le doy a cada color.
+ *
+ * Para cambiar la estética (p.ej. modo claro) toco SOLO los roles,
+ * no busco HEX por todo el código.
+ */
+
+:root {
+  /* ─── Paleta cruda ─────────────────────────────────────── */
+  --color-black: #0d0f0d;
+  --color-ink: #15171a;
+  --color-ink-2: #1c1f23;
+  --color-line: #2a2d31;
+
+  --color-text: #e8e8e3;
+  --color-text-dim: #8a8a85;
+  --color-text-faint: #5a5a55;
+
+  --color-green-neon: #6dff8a;
+  --color-amber: #ffb84a;
+  --color-blue-soft: #6ec1e4;
+  --color-red-soft: #ff6b6b;
+  --color-purple-soft: #b48cff;
+
+  /* ─── Roles semánticos ─────────────────────────────────── */
+  --bg: var(--color-black);
+  --bg-elev: var(--color-ink);
+  --bg-elev-2: var(--color-ink-2);
+
+  --fg: var(--color-text);
+  --fg-muted: var(--color-text-dim);
+  --fg-faint: var(--color-text-faint);
+
+  --accent: var(--color-green-neon);
+  --accent-warm: var(--color-amber);
+  --accent-info: var(--color-blue-soft);
+  --accent-danger: var(--color-red-soft);
+
+  --border: var(--color-line);
+
+  /* ─── Tipografía ───────────────────────────────────────── */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, 'SF Mono', monospace;
+  --font-display: var(--font-sans);
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  --leading-tight: 1.1;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.08em;
+
+  /* ─── Escala de tamaños de texto ──────────────────────── */
+  --text-xs: 0.75rem; /* 12px - tags, meta */
+  --text-sm: 0.875rem; /* 14px - body pequeño */
+  --text-base: 1rem; /* 16px - body */
+  --text-lg: 1.25rem; /* 20px - subtítulos */
+  --text-xl: 1.75rem; /* 28px - h3 */
+  --text-2xl: 2.5rem; /* 40px - h2 */
+  --text-3xl: 4rem; /* 64px - hero h1 */
+
+  /* ─── Espaciado (escala 4px) ──────────────────────────── */
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.25rem; /* 20 */
+  --space-6: 1.5rem; /* 24 */
+  --space-8: 2rem; /* 32 */
+  --space-10: 2.5rem; /* 40 */
+  --space-12: 3rem; /* 48 */
+  --space-16: 4rem; /* 64 */
+  --space-20: 5rem; /* 80 */
+  --space-24: 6rem; /* 96 */
+
+  /* ─── Bordes y radios ─────────────────────────────────── */
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --border-width: 1px;
+
+  /* ─── Layout ──────────────────────────────────────────── */
+  --max-width: 1480px;
+  --max-width-prose: 780px; /* ancho cómodo para lectura larga */
+  --header-height: 4rem;
+
+  /* ─── Otros ───────────────────────────────────────────── */
+  --transition-fast: 120ms ease;
+  --transition-base: 200ms ease;
+  --shadow-glow-accent: 0 0 24px -8px var(--accent);
+}

@@ -1,0 +1,97 @@
+/*
+ * SECTIONS
+ * Estilos compartidos por todas las páginas de sección (/css, /html, /a11y, /seo).
+ *
+ * Patrones que aparecen en todas:
+ *   - .page-header / .page-tag / .page-lead → cabecera de página.
+ *   - .subsection                            → cada bloque temático con id para scroll-spy.
+ *   - .subsection h2/h3/p/code/strong        → tipografía dentro de cada bloque.
+ *   - .bullet-list                           → lista con bullet retro "›" en verde.
+ *
+ * Si una página necesita algo MUY suyo, lo añade en su propio <style> scoped.
+ */
+
+/* ─── Cabecera de página ────────────────────────────────── */
+
+.page-header {
+  margin-bottom: var(--space-16);
+  padding-bottom: var(--space-8);
+  border-bottom: var(--border-width) solid var(--border);
+}
+
+.page-tag {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--accent);
+  letter-spacing: var(--tracking-wide);
+  margin-bottom: var(--space-4);
+}
+
+.page-lead {
+  color: var(--fg-muted);
+  font-size: var(--text-lg);
+  margin-top: var(--space-4);
+  max-width: 640px;
+}
+
+/* ─── Bloques de contenido (subsecciones) ───────────────── */
+
+.subsection {
+  margin-bottom: var(--space-20);
+  scroll-margin-top: calc(var(--header-height) + var(--space-4));
+}
+
+.subsection h2 {
+  margin-bottom: var(--space-4);
+}
+
+.subsection h3 {
+  margin-top: var(--space-10);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-lg);
+  color: var(--fg);
+}
+
+.subsection p {
+  color: var(--fg-muted);
+  margin-bottom: var(--space-4);
+  max-width: var(--max-width-prose);
+  line-height: var(--leading-relaxed);
+}
+
+.subsection code {
+  color: var(--accent);
+  background-color: var(--bg-elev);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+}
+
+.subsection strong {
+  color: var(--fg);
+  font-weight: var(--weight-bold);
+}
+
+/* ─── Lista con bullet retro "›" ───────────────────────── */
+
+.bullet-list {
+  list-style: none;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-6);
+  max-width: var(--max-width-prose);
+  line-height: var(--leading-relaxed);
+}
+
+.bullet-list li {
+  position: relative;
+  padding-left: var(--space-5);
+  margin-bottom: var(--space-2);
+}
+
+.bullet-list li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-family: var(--font-mono);
+}

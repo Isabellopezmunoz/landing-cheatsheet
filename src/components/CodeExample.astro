@@ -1,0 +1,227 @@
+---
+/*
+ * CodeExample
+ * Muestra un snippet de código (HTML y/o CSS) junto a su preview en vivo.
+ * El preview se renderiza en un <iframe srcdoc> para aislar sus estilos
+ * y no contaminar el resto del sitio.
+ *
+ * Props:
+ *   - html: marcado a previsualizar.
+ *   - css: estilos opcionales (se inyectan en el iframe).
+ *   - title: etiqueta opcional encima del bloque (ej: "Ejemplo: flexbox").
+ *   - height: altura del preview (default '180px').
+ *   - showCss: si false, no enseña el bloque de código CSS (útil cuando
+ *              solo importa el HTML).
+ *   - showHtml: si false, no enseña el bloque de código HTML.
+ */
+
+interface Props {
+  html: string
+  css?: string
+  title?: string
+  height?: string
+  showHtml?: boolean
+  showCss?: boolean
+}
+
+const { html, css = '', title, height = '200px', showHtml = true, showCss = true } = Astro.props
+
+const escapeHtml = (raw: string) =>
+  raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+const iframeBaseStyles = `
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 16px;
+    background: #15171a;
+    color: #e8e8e3;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+`
+
+const srcdoc = `<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <style>${iframeBaseStyles}${css}</style>
+  </head>
+  <body>${html}</body>
+</html>`
+---
+
+<figure class="code-example">
+  {title && <figcaption class="code-example-title">{title}</figcaption>}
+
+  <div class="code-example-grid">
+    <div class="code-example-snippets">
+      {
+        showHtml && (
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">HTML</span>
+            </div>
+            <pre>
+              <code set:html={escapeHtml(html.trim())} />
+            </pre>
+          </div>
+        )
+      }
+      {
+        css && showCss && (
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">CSS</span>
+            </div>
+            <pre>
+              <code set:html={escapeHtml(css.trim())} />
+            </pre>
+          </div>
+        )
+      }
+    </div>
+
+    <div class="code-example-preview">
+      <div class="code-block-header">
+        <span class="code-block-lang">PREVIEW</span>
+      </div>
+      <iframe
+        srcdoc={srcdoc}
+        sandbox="allow-same-origin"
+        style={`min-height: ${height};`}
+        title={title ? `Preview: ${title}` : 'Preview del ejemplo'}
+        class="code-example-iframe"
+        loading="lazy"></iframe>
+    </div>
+  </div>
+</figure>
+
+<script>
+  /*
+   * Ajusta la altura de cada iframe de preview a la altura real
+   * de su contenido. Así un ejemplo con poco contenido no muestra
+   * iframe gigante, y uno con mucho contenido no crea scroll interno.
+   *
+   * Funciona gracias a sandbox="allow-same-origin" en el iframe.
+   */
+  const iframes = document.querySelectorAll<HTMLIFrameElement>('.code-example-iframe')
+
+  const fitIframe = (iframe: HTMLIFrameElement) => {
+    const doc = iframe.contentDocument
+    if (!doc || !doc.body) return
+    const contentHeight = doc.documentElement.scrollHeight
+    iframe.style.height = `${contentHeight}px`
+  }
+
+  iframes.forEach((iframe) => {
+    const handleLoad = () => {
+      fitIframe(iframe)
+      // Observa cambios dentro del iframe (interacciones, fuentes que cargan tarde).
+      const doc = iframe.contentDocument
+      if (!doc) return
+      const observer = new ResizeObserver(() => fitIframe(iframe))
+      observer.observe(doc.documentElement)
+    }
+
+    if (iframe.contentDocument?.readyState === 'complete') {
+      handleLoad()
+    } else {
+      iframe.addEventListener('load', handleLoad)
+    }
+  })
+</script>
+
+<style>
+  .code-example {
+    margin-block: var(--space-6);
+  }
+
+  .code-example-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--fg-faint);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+  }
+
+  .code-example-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background-color: var(--bg-elev);
+  }
+
+  .code-example-snippets {
+    display: flex;
+    flex-direction: column;
+    border-right: var(--border-width) solid var(--border);
+  }
+
+  .code-block + .code-block {
+    border-top: var(--border-width) solid var(--border);
+  }
+
+  .code-block-header {
+    display: flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-4);
+    border-bottom: var(--border-width) solid var(--border);
+    background-color: var(--bg-elev-2);
+  }
+
+  .code-block-lang {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--accent);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .code-block pre {
+    margin: 0;
+    padding: var(--space-4);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--fg);
+  }
+
+  .code-block code {
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    white-space: pre;
+  }
+
+  .code-example-preview {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-elev);
+  }
+
+  .code-example-preview iframe {
+    width: 100%;
+    border: none;
+    background-color: var(--bg-elev);
+  }
+
+  @media (max-width: 860px) {
+    .code-example-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .code-example-snippets {
+      border-right: none;
+      border-bottom: var(--border-width) solid var(--border);
+    }
+  }
+</style>

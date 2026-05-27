@@ -1,0 +1,212 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+const sections = [
+  {
+    label: 'HTML',
+    href: '/html',
+    description: 'Estructura, semántica, formularios, meta tags y multimedia.',
+    code: '<section>...</section>',
+  },
+  {
+    label: 'CSS',
+    href: '/css',
+    description: 'Selectores, box model, flexbox, grid, responsive, animaciones.',
+    code: 'display: grid;',
+  },
+  {
+    label: 'Accesibilidad',
+    href: '/a11y',
+    description: 'Semántica accesible, aria-*, foco, contraste y teclado.',
+    code: 'aria-label="..."',
+  },
+  {
+    label: 'SEO',
+    href: '/seo',
+    description: 'Meta tags, Open Graph y estructura para crawlers.',
+    code: '<meta name="..." />',
+  },
+]
+---
+
+<BaseLayout
+  title="landing-cheatsheet"
+  description="Referencia personal de HTML, CSS, accesibilidad y SEO para construir landings."
+>
+  <section class="hero container">
+    <p class="hero-tag">[ REFERENCE GUIDE ]</p>
+    <h1 class="hero-title">
+      Todo lo que necesito<br />para construir landings
+    </h1>
+    <p class="hero-lead">
+      Cheatsheet personal en español sobre HTML, CSS, accesibilidad y SEO. Cada concepto con
+      explicación corta, código y ejemplo en vivo.
+    </p>
+    <div class="hero-actions">
+      <a href="/css" class="btn-primary">Empezar por CSS</a>
+      <a href="#sections" class="btn-secondary">Ver todas las secciones</a>
+    </div>
+  </section>
+
+  <section id="sections" class="sections container">
+    <p class="sections-tag">[ SECCIONES ]</p>
+    <ul role="list" class="grid">
+      {
+        sections.map((section) => (
+          <li>
+            <a href={section.href} class="card">
+              <p class="card-code">{section.code}</p>
+              <h2 class="card-title">{section.label}</h2>
+              <p class="card-description">{section.description}</p>
+              <span class="card-cta">Abrir →</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--space-24) var(--space-20);
+    border-bottom: var(--border-width) solid var(--border);
+  }
+
+  .hero-tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--accent);
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--space-6);
+  }
+
+  .hero-title {
+    font-size: var(--text-3xl);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    max-width: 900px;
+  }
+
+  .hero-lead {
+    color: var(--fg-muted);
+    font-size: var(--text-lg);
+    margin-top: var(--space-6);
+    max-width: 600px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-10);
+    flex-wrap: wrap;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-3) var(--space-6);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    border-radius: var(--radius-sm);
+    transition:
+      transform var(--transition-fast),
+      opacity var(--transition-fast);
+  }
+
+  .btn-primary {
+    background-color: var(--accent);
+    color: var(--bg);
+    font-weight: var(--weight-bold);
+  }
+
+  .btn-primary:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    border: var(--border-width) solid var(--border);
+    color: var(--fg);
+  }
+
+  .btn-secondary:hover {
+    opacity: 1;
+    border-color: var(--fg-muted);
+  }
+
+  .sections {
+    padding-block: var(--space-16);
+  }
+
+  .sections-tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--accent);
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--space-8);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 720px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-8);
+    background-color: var(--bg-elev);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--fg);
+    height: 100%;
+    transition:
+      border-color var(--transition-base),
+      transform var(--transition-base);
+  }
+
+  .card:hover {
+    opacity: 1;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .card-code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--accent);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .card-title {
+    font-size: var(--text-xl);
+    margin-top: var(--space-2);
+  }
+
+  .card-description {
+    color: var(--fg-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+  }
+
+  .card-cta {
+    margin-top: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--accent);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+</style>

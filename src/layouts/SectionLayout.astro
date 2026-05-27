@@ -1,0 +1,201 @@
+---
+import BaseLayout from './BaseLayout.astro'
+
+interface SubsectionLink {
+  id: string
+  label: string
+}
+
+interface Props {
+  title: string
+  description?: string
+  sectionLabel: string
+  subsections: SubsectionLink[]
+}
+
+const { title, description, sectionLabel, subsections } = Astro.props
+// sectionLabel se conserva para el aria-label de accesibilidad
+// aunque ya no se muestre visualmente en el sidebar.
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="layout container">
+    <aside class="sidebar" aria-label={`Subsecciones de ${sectionLabel}`}>
+      <nav>
+        <ul role="list" class="sidebar-list">
+          {
+            subsections.map((subsection, index) => (
+              <li>
+                <a href={`#${subsection.id}`} class="sidebar-link" data-target={subsection.id}>
+                  <span class="sidebar-index" aria-hidden="true">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span class="sidebar-chevron" aria-hidden="true">
+                    ›
+                  </span>
+                  <span class="sidebar-text">{subsection.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </aside>
+
+    <article class="content">
+      <slot />
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: var(--space-24);
+    padding-block: var(--space-16);
+    align-items: start;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-8));
+  }
+
+  .sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    list-style: none;
+    border-left: var(--border-width) solid var(--border);
+  }
+
+  .sidebar-link {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--fg-muted);
+    padding: var(--space-2) var(--space-3);
+    margin-left: -1px;
+    border-left: var(--border-width) solid transparent;
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+
+  .sidebar-index {
+    color: var(--fg-faint);
+    font-size: var(--text-xs);
+    letter-spacing: 0;
+    transition: color var(--transition-fast);
+  }
+
+  .sidebar-chevron {
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  .sidebar-text {
+    letter-spacing: 0;
+  }
+
+  .sidebar-link:hover {
+    opacity: 1;
+    color: var(--accent);
+    background-color: var(--bg-elev);
+  }
+
+  .sidebar-link:hover .sidebar-index {
+    color: var(--fg-muted);
+  }
+
+  .sidebar-link:hover .sidebar-chevron {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .sidebar-link.is-active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background-color: var(--bg-elev);
+  }
+
+  .sidebar-link.is-active .sidebar-index {
+    color: var(--accent);
+  }
+
+  .sidebar-link.is-active .sidebar-chevron {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .content {
+    min-width: 0;
+  }
+
+  @media (max-width: 860px) {
+    .layout {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+
+    .sidebar {
+      position: static;
+      margin-top: 0;
+    }
+
+    .sidebar-list {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      border-left: none;
+      border-bottom: var(--border-width) solid var(--border);
+      padding-bottom: var(--space-4);
+    }
+
+    .sidebar-link {
+      margin-left: 0;
+      border-left: none;
+    }
+  }
+</style>
+
+<script>
+  // Scroll-spy: marca como activo el link de la subsección visible.
+  const links = document.querySelectorAll<HTMLAnchorElement>('.sidebar-link[data-target]')
+  const targets = Array.from(links)
+    .map((link) => {
+      const id = link.dataset.target
+      if (!id) return null
+      const element = document.getElementById(id)
+      if (!element) return null
+      return { link, element }
+    })
+    .filter((entry): entry is { link: HTMLAnchorElement; element: HTMLElement } => entry !== null)
+
+  if (targets.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const match = targets.find((target) => target.element === entry.target)
+          if (!match) return
+          if (entry.isIntersecting) {
+            links.forEach((link) => link.classList.remove('is-active'))
+            match.link.classList.add('is-active')
+          }
+        })
+      },
+      { rootMargin: '-30% 0px -60% 0px', threshold: 0 },
+    )
+
+    targets.forEach((target) => observer.observe(target.element))
+  }
+</script>

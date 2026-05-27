@@ -1,0 +1,2123 @@
+---
+import SectionLayout from '../../layouts/SectionLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import InteractionHint from '../../components/InteractionHint.astro'
+
+const subsections = [
+  { id: 'selectores', label: 'Selectores' },
+  { id: 'box-model', label: 'Box model' },
+  { id: 'unidades', label: 'Unidades' },
+  { id: 'logical', label: 'Logical props' },
+  { id: 'flexbox', label: 'Flexbox' },
+  { id: 'grid', label: 'Grid' },
+  { id: 'position', label: 'Position' },
+  { id: 'aspect-ratio', label: 'Aspect ratio' },
+  { id: 'imagenes', label: 'Imágenes' },
+  { id: 'gradientes', label: 'Gradientes' },
+  { id: 'sombras', label: 'Sombras' },
+  { id: 'backdrop', label: 'Backdrop filter' },
+  { id: 'fuentes', label: 'Fuentes web' },
+  { id: 'responsive', label: 'Responsive' },
+  { id: 'variables', label: 'Variables CSS' },
+  { id: 'nesting', label: 'Nesting' },
+  { id: 'layer', label: 'Cascade layers' },
+  { id: 'animaciones', label: 'Animaciones' },
+  { id: 'scroll-snap', label: 'Scroll snap' },
+  { id: 'pseudo', label: 'Pseudo-clases' },
+  { id: 'has', label: ':has()' },
+]
+---
+
+<SectionLayout
+  title="CSS · landing-cheatsheet"
+  description="Referencia de CSS moderno para construir landings: selectores, layout, responsive, animaciones y más."
+  sectionLabel="CSS"
+  subsections={subsections}
+>
+  <header class="page-header">
+    <p class="page-tag">[ SECCIÓN / CSS ]</p>
+    <h1>CSS</h1>
+    <p class="page-lead">
+      Todo lo necesario para dar estilo a una landing moderna: desde selectores básicos hasta
+      <code>:has()</code>, container queries, scroll-snap y cascade layers.
+    </p>
+  </header>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* SELECTORES                                                  */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="selectores" class="subsection">
+    <h2>Selectores</h2>
+    <p>
+      Un selector decide <em>a qué elementos</em> del HTML se aplica un bloque de estilos. Hay varias
+      familias y se combinan entre sí.
+    </p>
+
+    <h3>Por tipo, clase, id y atributo</h3>
+    <ul class="bullet-list">
+      <li><code>p</code> — todos los <code>&lt;p&gt;</code> de la página.</li>
+      <li><code>.card</code> — elementos con clase <code>card</code>. La opción por defecto.</li>
+      <li>
+        <code>#hero</code> — elemento con id <code>hero</code> (solo debe haber uno por página).
+      </li>
+      <li>
+        <code>[type="email"]</code> — selecciona por atributo. Imprescindible en formularios.
+      </li>
+      <li>
+        <code>[href^="https"]</code> — atributo que empieza por X. También <code>$=</code> (acaba),
+        <code>*=</code> (contiene).
+      </li>
+      <li><code>*</code> — universal. Úsalo con cuidado, afecta a todo.</li>
+    </ul>
+
+    <CodeExample
+      title="Mecánica: tipo + clase + id + atributo"
+      html={`<h2>Título</h2>
+<p class="lead">Párrafo destacado.</p>
+<p>Párrafo normal.</p>
+<a href="https://ejemplo.com">Link externo</a>
+<a href="/interno">Link interno</a>`}
+      css={`h2 { color: #6dff8a; font-family: sans-serif; }
+.lead { color: #ffb84a; font-weight: bold; }
+[href^="https"]::after {
+  content: ' ↗';
+  color: #6ec1e4;
+}`}
+    />
+
+    <h3>Combinadores: relaciones entre elementos</h3>
+    <ul class="bullet-list">
+      <li><code>A B</code> — descendiente (B dentro de A, a cualquier profundidad).</li>
+      <li><code>A &gt; B</code> — hijo directo (B justo dentro de A).</li>
+      <li><code>A + B</code> — hermano inmediatamente siguiente.</li>
+      <li><code>A ~ B</code> — cualquier hermano siguiente.</li>
+    </ul>
+
+    <CodeExample
+      title="Hijo directo vs descendiente"
+      html={`<div class="card">
+  <h3>Hijo directo (verde)</h3>
+  <div>
+    <h3>Descendiente, no hijo directo (sin estilo)</h3>
+  </div>
+</div>`}
+      css={`.card > h3 { color: #6dff8a; }
+.card h3 { font-family: monospace; }`}
+    />
+
+    <h3>Especificidad: quién gana cuando hay conflicto</h3>
+    <p>
+      Si dos reglas apuntan al mismo elemento, gana la <strong>más específica</strong>. La fórmula
+      mental:
+    </p>
+    <ul class="bullet-list">
+      <li>
+        <code>style="..."</code> inline (1000) &gt; <code>#id</code> (100) &gt;
+        <code>.clase</code> / <code>[atributo]</code> / <code>:pseudo</code> (10) &gt;
+        <code>elemento</code> / <code>::pseudo-elemento</code> (1).
+      </li>
+      <li>
+        Combinar selectores suma: <code>.card .title</code> (20) pesa más que
+        <code>.title</code> (10).
+      </li>
+      <li>Si hay empate, gana la regla que aparece más abajo en el CSS.</li>
+      <li>
+        <code>!important</code> rompe la cascada. Evítalo salvo en utilidades muy concretas.
+      </li>
+    </ul>
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>"Mi regla no se aplica"</strong> — casi siempre es especificidad. Inspecciona el elemento
+        en DevTools, ahí ves qué regla está ganando.
+      </li>
+      <li>
+        <strong>Estilizar por id</strong> — funciona pero te limita: solo puedes tener un id por página
+        y la especificidad es muy alta. Prefiere clases.
+      </li>
+      <li>
+        <strong>Selectores con muchos niveles</strong> (<code>.a .b .c .d span</code>) — frágil y
+        difícil de sobreescribir. Limítate a 2-3 niveles.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* BOX MODEL                                                   */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="box-model" class="subsection">
+    <h2>Box model</h2>
+    <p>
+      Cada elemento es una caja con cuatro capas, de dentro hacia fuera: <code>content</code>{' '}
+      (contenido), <code>padding</code> (relleno interno), <code>border</code> (borde) y
+      <code>margin</code> (separación con vecinos).
+    </p>
+
+    <CodeExample
+      title="Mecánica: las cuatro capas en acción"
+      height="220px"
+      html={`<div class="box">Content</div>`}
+      css={`.box {
+  background: #6dff8a;
+  color: #0d0f0d;
+  padding: 16px;
+  border: 4px solid #ffb84a;
+  margin: 24px;
+  width: 200px;
+  font-family: monospace;
+  text-align: center;
+}`}
+    />
+
+    <h3><code>box-sizing</code>: el ajuste imprescindible</h3>
+    <p>
+      Por defecto (<code>content-box</code>), <code>width</code> mide solo el contenido. Si añades padding
+      o border, el elemento crece más de lo que pediste — pesadilla para layouts.
+    </p>
+    <p>
+      Solución estándar: <code>box-sizing: border-box</code> en todo. Ahora <code>width</code>{' '}
+      incluye padding y border, y los números son predecibles.
+    </p>
+
+    <CodeExample
+      title="content-box vs border-box (ambos width: 200px)"
+      height="200px"
+      html={`<div class="caja default">content-box</div>
+<div class="caja border">border-box</div>`}
+      css={`.caja {
+  width: 200px;
+  padding: 16px;
+  border: 4px solid #6dff8a;
+  margin-bottom: 12px;
+  background: #1c1f23;
+  color: #e8e8e3;
+  font-family: monospace;
+  font-size: 12px;
+}
+.border { box-sizing: border-box; }`}
+    />
+
+    <CodeExample
+      title="Reset universal (ya incluido en este sitio)"
+      showHtml={false}
+      html={`<p>Reset universal aplicado.</p>`}
+      css={`*, *::before, *::after {
+  box-sizing: border-box;
+}`}
+    />
+
+    <h3>Colapso de márgenes verticales</h3>
+    <p>
+      Cuando dos márgenes verticales se tocan, <strong>no se suman</strong>: el navegador usa el
+      mayor. Pasa entre hermanos adyacentes y entre padre/hijo si no hay padding o border en medio.
+    </p>
+
+    <CodeExample
+      title="Dos cajas con margin: 40px → la separación NO es 80px"
+      height="200px"
+      html={`<div class="caja">Margin 40 abajo</div>
+<div class="caja">Margin 40 arriba</div>`}
+      css={`.caja {
+  background: #1c1f23;
+  color: #6dff8a;
+  padding: 12px;
+  margin: 40px 0;
+  font-family: monospace;
+}`}
+    />
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Elemento más ancho de lo pedido</strong> — falta <code>border-box</code> o se mezcló
+        <code>width</code> con padding/border.
+      </li>
+      <li>
+        <strong>Espacios verticales "raros"</strong> — colapso de márgenes. Solución: usar
+        <code>gap</code> en flexbox/grid en lugar de márgenes; o poner padding en el padre en lugar de
+        margin en el hijo.
+      </li>
+      <li>
+        <strong>El <code>display</code> condiciona el modelo</strong> — los inline elements (
+        <code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>) ignoran <code>width</code> y márgenes verticales.
+        Pásalos a <code>inline-block</code> o <code>block</code>.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* UNIDADES                                                    */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="unidades" class="subsection">
+    <h2>Unidades</h2>
+    <p>
+      Las unidades miden tamaños, distancias y proporciones. Elegir la correcta decide si la landing
+      escala bien entre dispositivos.
+    </p>
+
+    <h3>Cuál usar cuándo</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>px</code> — absoluta. Bordes finos, sombras, detalles que NO deben escalar con el zoom del
+        usuario.
+      </li>
+      <li>
+        <code>rem</code> — relativa al <code>font-size</code> de <code>&lt;html&gt;</code> (16px por defecto).
+        <strong>La preferida</strong> para texto y espaciados — respeta el zoom del usuario.
+      </li>
+      <li>
+        <code>em</code> — relativa al <code>font-size</code> del padre. Útil dentro de componentes para
+        que padding/border escalen con el texto.
+      </li>
+      <li><code>%</code> — porcentaje del contenedor. Anchos fluidos.</li>
+      <li>
+        <code>vw</code> / <code>vh</code> — porcentaje del ancho/alto del viewport. Hero a pantalla completa.
+      </li>
+      <li>
+        <code>svh</code> / <code>dvh</code> / <code>lvh</code> — viewport pequeño / dinámico / largo.
+        Modernos: <code>dvh</code> se adapta cuando la barra del navegador móvil aparece/desaparece.
+      </li>
+      <li><code>fr</code> — fracción del espacio disponible. Solo en Grid.</li>
+      <li>
+        <code>ch</code> — ancho del carácter "0" de la fuente actual. Útil para
+        <code>max-width: 65ch</code> en bloques de lectura.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Mecánica: rem vs em"
+      height="180px"
+      html={`<div class="parent">
+  <p class="rem">Soy 1rem (16px siempre)</p>
+  <p class="em">Soy 1em (escala con el padre)</p>
+</div>`}
+      css={`.parent {
+  font-size: 24px;
+  background: #1c1f23;
+  padding: 12px;
+  color: #e8e8e3;
+  font-family: monospace;
+}
+.rem { font-size: 1rem; margin: 4px 0; }
+.em { font-size: 1em; color: #6dff8a; margin: 4px 0; }`}
+    />
+
+    <h3><code>clamp(min, ideal, max)</code>: tamaños fluidos</h3>
+    <p>
+      Permite que un valor escale con el viewport pero nunca baje del mínimo ni supere el máximo.
+      Imprescindible para tipografía moderna sin media queries.
+    </p>
+
+    <InteractionHint>Redimensiona tu ventana para ver cómo escala el título.</InteractionHint>
+
+    <CodeExample
+      title="En landing: hero con título fluido"
+      height="200px"
+      html={`<section class="hero">
+  <p class="tag">[ HERO ]</p>
+  <h1>Título que escala<br>con la pantalla</h1>
+</section>`}
+      css={`.hero {
+  background: #0d0f0d;
+  color: #e8e8e3;
+  padding: clamp(16px, 4vw, 48px);
+  font-family: sans-serif;
+}
+.tag {
+  color: #6dff8a;
+  font-family: monospace;
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+.hero h1 {
+  font-size: clamp(1.5rem, 5vw + 0.5rem, 3rem);
+  margin: 0;
+  line-height: 1.1;
+}`}
+    />
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Todo en <code>px</code></strong> — rompe el zoom del usuario y la accesibilidad. Usa <code
+          >rem</code
+        > para texto y espaciado.
+      </li>
+      <li>
+        <strong><code>100vh</code> en móvil corta el contenido</strong> — la barra del navegador contradice
+        <code>vh</code>. Usa <code>100dvh</code>.
+      </li>
+      <li>
+        <strong>Anidar <code>em</code></strong> — los <code>em</code> se multiplican entre padres (un
+        padre con <code>1.2em</code> dentro de otro <code>1.2em</code> da <code>1.44em</code>
+        efectivo). Si te lías, vuelve a <code>rem</code>.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* LOGICAL PROPERTIES                                          */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="logical" class="subsection">
+    <h2>Logical properties</h2>
+    <p>
+      Propiedades CSS modernas que se basan en la <strong>dirección de lectura</strong> en lugar de coordenadas
+      físicas. <code>margin-inline</code> es "margen en el eje del texto" (horizontal en español/inglés).
+      Funcionan idénticas a las clásicas pero son i18n-ready y más expresivas.
+    </p>
+
+    <h3>Equivalencias</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>margin-inline: auto</code> ≈ <code>margin-left + margin-right: auto</code>. Centrar un
+        elemento de ancho fijo en una línea.
+      </li>
+      <li>
+        <code>padding-block: 1rem</code> ≈ <code>padding-top + padding-bottom: 1rem</code>.
+      </li>
+      <li>
+        <code>inset: 0</code> ≈ <code>top: 0; right: 0; bottom: 0; left: 0</code>. Para
+        <code>position: absolute</code> que cubre al padre.
+      </li>
+      <li>
+        <code>border-inline-start</code> — el borde "donde empieza el texto" (izquierda en LTR).
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Mecánica: padding-block + margin-inline auto"
+      height="180px"
+      html={`<div class="caja">Centrada y con padding vertical</div>`}
+      css={`.caja {
+  background: #1c1f23;
+  color: #6dff8a;
+  padding-block: 24px;
+  padding-inline: 16px;
+  margin-inline: auto;
+  width: 240px;
+  text-align: center;
+  font-family: monospace;
+  border-inline-start: 4px solid #6dff8a;
+}`}
+    />
+
+    <CodeExample
+      title="En landing: overlay que cubre todo el padre con inset: 0"
+      height="160px"
+      html={`<div class="card">
+  <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='120'><rect width='400' height='120' fill='%231c1f23'/><text x='50%' y='50%' fill='%236dff8a' font-family='monospace' text-anchor='middle' dy='.3em'>imagen</text></svg>" alt="" />
+  <div class="overlay">
+    <p>Título sobre la imagen</p>
+  </div>
+</div>`}
+      css={`.card {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin-inline: auto;
+}
+.card img {
+  display: block;
+  width: 100%;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(13, 15, 13, 0.6);
+  color: #e8e8e3;
+  font-family: monospace;
+}`}
+    />
+
+    <h3>Cuándo usarlas</h3>
+    <ul class="bullet-list">
+      <li>Siempre que vayas a usar <code>top/right/bottom/left</code>.</li>
+      <li>
+        Siempre que pongas márgenes/padding a "los lados" o "arriba y abajo" — usa
+        <code>-inline</code> / <code>-block</code>.
+      </li>
+      <li>Si el sitio puede tener idiomas RTL (árabe, hebreo) en el futuro, son obligatorias.</li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* FLEXBOX                                                     */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="flexbox" class="subsection">
+    <h2>Flexbox</h2>
+    <p>
+      Layout en <strong>una dimensión</strong>: filas o columnas. Perfecto para navbars, listas de
+      items en línea, alinear contenido dentro de un componente.
+    </p>
+
+    <h3>Propiedades del contenedor</h3>
+    <ul class="bullet-list">
+      <li><code>display: flex</code> — activa flexbox.</li>
+      <li><code>flex-direction</code> — <code>row</code> (default) o <code>column</code>.</li>
+      <li>
+        <code>justify-content</code> — alinea en el eje principal:
+        <code>flex-start</code> / <code>center</code> / <code>space-between</code> /
+        <code>space-around</code> / <code>space-evenly</code>.
+      </li>
+      <li><code>align-items</code> — alinea en el eje cruzado.</li>
+      <li><code>gap</code> — separación entre hijos. Mucho mejor que márgenes.</li>
+      <li><code>flex-wrap: wrap</code> — los hijos saltan de línea cuando no caben.</li>
+    </ul>
+
+    <CodeExample
+      title="Mecánica: justify-content + align-items"
+      height="140px"
+      html={`<div class="box">
+  <div class="dot"></div>
+  <div class="dot"></div>
+  <div class="dot"></div>
+</div>`}
+      css={`.box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+  padding: 16px;
+  background: #1c1f23;
+  border: 1px dashed #2a2d31;
+}
+.dot {
+  width: 32px;
+  height: 32px;
+  background: #6dff8a;
+  border-radius: 4px;
+}`}
+    />
+
+    <CodeExample
+      title="En landing: navbar real con logo + links + CTA"
+      height="100px"
+      html={`<nav class="nav">
+  <a class="logo">>_ marca</a>
+  <div class="links">
+    <a>Producto</a>
+    <a>Precios</a>
+    <a>Contacto</a>
+  </div>
+  <button class="cta">Probar</button>
+</nav>`}
+      css={`.nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 12px 16px;
+  background: #0d0f0d;
+  border-bottom: 1px solid #2a2d31;
+  font-family: monospace;
+}
+.logo { color: #6dff8a; font-weight: bold; }
+.links { display: flex; gap: 16px; margin-inline-start: auto; }
+.links a { color: #8a8a85; cursor: pointer; }
+.links a:hover { color: #e8e8e3; }
+.cta {
+  background: #6dff8a;
+  color: #0d0f0d;
+  border: none;
+  padding: 6px 12px;
+  font-family: monospace;
+  font-weight: bold;
+  cursor: pointer;
+}`}
+    />
+
+    <h3>Propiedades del hijo</h3>
+    <ul class="bullet-list">
+      <li><code>flex: 1</code> — atajo para que un hijo ocupe todo el espacio sobrante.</li>
+      <li>
+        <code>flex-grow</code> / <code>flex-shrink</code> / <code>flex-basis</code> — control fino de
+        crecimiento, encogimiento y tamaño base.
+      </li>
+      <li><code>align-self</code> — anula <code>align-items</code> para ese hijo.</li>
+      <li>
+        <code>margin-inline-start: auto</code> en un hijo — lo empuja al final del eje. Truco clásico
+        para "logo a la izquierda, todo lo demás a la derecha".
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Sidebar fija + main flexible"
+      height="160px"
+      html={`<div class="layout">
+  <aside>Sidebar 100px</aside>
+  <main>Main: flex: 1 → ocupa el resto</main>
+</div>`}
+      css={`.layout {
+  display: flex;
+  gap: 12px;
+  height: 120px;
+  font-family: monospace;
+}
+.layout aside {
+  width: 100px;
+  background: #6dff8a;
+  color: #0d0f0d;
+  padding: 12px;
+}
+.layout main {
+  flex: 1;
+  background: #1c1f23;
+  color: #e8e8e3;
+  padding: 12px;
+}`}
+    />
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>"No se centra"</strong> — comprueba que <code>display: flex</code> está en el
+        <em>padre</em>, no en el elemento que quieres centrar.
+      </li>
+      <li>
+        <strong>Items que se encogen al añadir contenido</strong> — flex permite encoger por defecto.
+        Si quieres tamaños fijos: <code>flex-shrink: 0</code>.
+      </li>
+      <li>
+        <strong>Hijos no caben pero no bajan de línea</strong> — falta <code>flex-wrap: wrap</code>
+        en el padre.
+      </li>
+      <li>
+        <strong>Espacios extra entre items</strong> — espacios en blanco del HTML entre etiquetas. Usa
+        <code>gap</code> en lugar de márgenes y olvídate.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* GRID                                                        */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="grid" class="subsection">
+    <h2>Grid</h2>
+    <p>
+      Layout en <strong>dos dimensiones</strong>: filas y columnas a la vez. Para layouts de página
+      completa, dashboards y, sobre todo, grids de cards en landings.
+    </p>
+
+    <h3>Columnas y filas</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>grid-template-columns: 200px 1fr 1fr</code> — primera fija, las otras dos reparten el resto.
+      </li>
+      <li><code>repeat(3, 1fr)</code> — atajo para repetir.</li>
+      <li>
+        <code>repeat(auto-fit, minmax(220px, 1fr))</code> — grid responsive sin media queries: tantas
+        columnas como quepan, cada una mínimo 220px.
+      </li>
+      <li><code>gap</code> — separación entre celdas.</li>
+      <li>
+        <code>place-items: center</code> — centra contenido en celda en ambos ejes. Atajo para
+        <code>align-items</code> + <code>justify-items</code>.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Mecánica: 3 columnas iguales con gap"
+      height="160px"
+      html={`<div class="grid">
+  <div>1</div><div>2</div><div>3</div>
+</div>`}
+      css={`.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.grid > div {
+  background: #1c1f23;
+  color: #6dff8a;
+  padding: 24px;
+  text-align: center;
+  font-family: monospace;
+  border: 1px solid #2a2d31;
+}`}
+    />
+
+    <InteractionHint
+      >Redimensiona la ventana: el grid se reorganiza sin media queries.</InteractionHint
+    >
+
+    <CodeExample
+      title="En landing: grid de features responsive con auto-fit"
+      height="280px"
+      html={`<div class="features">
+  <article>
+    <h3>Rápido</h3>
+    <p>Carga en menos de 1s.</p>
+  </article>
+  <article>
+    <h3>Accesible</h3>
+    <p>Cumple WCAG AA.</p>
+  </article>
+  <article>
+    <h3>Responsive</h3>
+    <p>Hasta móvil de 320px.</p>
+  </article>
+  <article>
+    <h3>Sin tracking</h3>
+    <p>0 cookies por defecto.</p>
+  </article>
+</div>`}
+      css={`.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  font-family: sans-serif;
+}
+.features article {
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+  border-radius: 4px;
+  padding: 20px;
+  color: #e8e8e3;
+}
+.features h3 {
+  margin: 0 0 8px;
+  color: #6dff8a;
+  font-family: monospace;
+  font-size: 14px;
+}
+.features p { margin: 0; font-size: 14px; color: #8a8a85; }`}
+    />
+
+    <h3>Colocar items en celdas concretas</h3>
+    <p>
+      Con <code>grid-column</code> y <code>grid-row</code> un hijo puede ocupar varias celdas o saltar
+      a una posición concreta. <code>1 / -1</code> = de la primera línea a la última.
+    </p>
+
+    <CodeExample
+      title="Item que ocupa 2 columnas (hero destacado)"
+      height="220px"
+      html={`<div class="grid">
+  <div class="big">Hero (2 cols)</div>
+  <div>A</div>
+  <div>B</div>
+  <div>C</div>
+  <div>D</div>
+</div>`}
+      css={`.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  font-family: monospace;
+}
+.grid > div {
+  background: #1c1f23;
+  color: #e8e8e3;
+  padding: 16px;
+  border: 1px solid #2a2d31;
+}
+.big {
+  grid-column: 1 / -1;
+  background: #6dff8a;
+  color: #0d0f0d;
+}`}
+    />
+
+    <h3>Áreas con nombre (layouts complejos legibles)</h3>
+
+    <CodeExample
+      title="Layout completo de página con grid-template-areas"
+      height="240px"
+      html={`<div class="page">
+  <header>Header</header>
+  <aside>Aside</aside>
+  <main>Main</main>
+  <footer>Footer</footer>
+</div>`}
+      css={`.page {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  grid-template-areas:
+    "header header"
+    "aside  main"
+    "footer footer";
+  gap: 8px;
+  font-family: monospace;
+}
+.page > * {
+  background: #1c1f23;
+  color: #e8e8e3;
+  padding: 12px;
+}
+header { grid-area: header; background: #6dff8a; color: #0d0f0d; }
+aside  { grid-area: aside; }
+main   { grid-area: main; }
+footer { grid-area: footer; background: #ffb84a; color: #0d0f0d; }`}
+    />
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Confundir Grid con Flexbox</strong> — si solo necesitas alinear en una dimensión, flexbox
+        es más simple. Grid brilla cuando hay filas Y columnas que importan.
+      </li>
+      <li>
+        <strong><code>1fr</code> + contenido grande desborda</strong> — <code>1fr</code> equivale a
+        <code>minmax(auto, 1fr)</code>. Si una celda tiene contenido enorme, fuerza el ancho. Usa
+        <code>minmax(0, 1fr)</code> para evitarlo.
+      </li>
+      <li>
+        <strong>Cards de distintas alturas</strong> — por defecto Grid las iguala. Si quieres que cada
+        una tenga su altura: <code>align-items: start</code> en el contenedor.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* POSITION                                                    */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="position" class="subsection">
+    <h2>Position</h2>
+    <p>Controla cómo se posiciona un elemento respecto al flujo normal del documento.</p>
+
+    <h3>Los cinco valores</h3>
+    <ul class="bullet-list">
+      <li><code>static</code> — default. Sigue el flujo normal.</li>
+      <li>
+        <code>relative</code> — sigue el flujo, pero puedes desplazarlo con
+        <code>top/right/bottom/left</code>. Y lo más importante: actúa como
+        <strong>contenedor de posicionamiento</strong> para hijos <code>absolute</code>.
+      </li>
+      <li>
+        <code>absolute</code> — sale del flujo. Se posiciona respecto al ancestro
+        <em>posicionado</em> más cercano (no <code>static</code>).
+      </li>
+      <li>
+        <code>fixed</code> — sale del flujo. Se posiciona respecto al viewport. Se queda fijo al hacer
+        scroll.
+      </li>
+      <li>
+        <code>sticky</code> — híbrido: se comporta como <code>relative</code> hasta que el scroll llega
+        a un umbral; entonces se queda pegado como <code>fixed</code>.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Mecánica: badge en esquina con absolute"
+      height="160px"
+      html={`<div class="card">
+  <span class="badge">NEW</span>
+  <p>Card con badge en esquina</p>
+</div>`}
+      css={`.card {
+  position: relative;
+  background: #1c1f23;
+  color: #e8e8e3;
+  padding: 24px;
+  border: 1px solid #2a2d31;
+  font-family: sans-serif;
+}
+.badge {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-end: 8px;
+  background: #6dff8a;
+  color: #0d0f0d;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-family: monospace;
+}`}
+    />
+
+    <InteractionHint>Haz scroll dentro del preview para ver el header sticky.</InteractionHint>
+
+    <CodeExample
+      title="En landing: header sticky"
+      height="200px"
+      html={`<div class="scroller">
+  <header class="sticky-header">>_ navbar sticky</header>
+  <p>Contenido 1</p>
+  <p>Contenido 2</p>
+  <p>Contenido 3</p>
+  <p>Contenido 4</p>
+  <p>Contenido 5</p>
+  <p>Contenido 6</p>
+</div>`}
+      css={`.scroller {
+  height: 160px;
+  overflow-y: auto;
+  background: #15171a;
+  font-family: monospace;
+}
+.sticky-header {
+  position: sticky;
+  inset-block-start: 0;
+  background: #0d0f0d;
+  color: #6dff8a;
+  padding: 8px 12px;
+  border-bottom: 1px solid #2a2d31;
+}
+.scroller p {
+  padding: 12px;
+  margin: 0;
+  border-bottom: 1px solid #2a2d31;
+  color: #e8e8e3;
+}`}
+    />
+
+    <h3><code>z-index</code> y stacking context</h3>
+    <p>
+      <code>z-index</code> solo funciona en elementos posicionados (no <code>static</code>). Valores
+      altos van delante. Pero ojo: cada elemento posicionado con <code>z-index</code> crea su propio <strong
+        >stacking context</strong
+      >; un hijo nunca puede salir del contexto de su padre.
+    </p>
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong><code>absolute</code> "se va al body"</strong> — falta <code
+          >position: relative</code
+        >
+        en el padre que debería contenerlo.
+      </li>
+      <li>
+        <strong>"Mi <code>z-index: 9999</code> no funciona"</strong> — el elemento está dentro de un stacking
+        context que lo confina. Sube el z-index del ancestro.
+      </li>
+      <li>
+        <strong><code>sticky</code> no se pega</strong> — el padre tiene <code
+          >overflow: hidden</code
+        >
+        u <code>overflow: auto</code>, o no tiene altura suficiente para que haya scroll.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* ASPECT RATIO                                                */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="aspect-ratio" class="subsection">
+    <h2>Aspect ratio</h2>
+    <p>
+      Fuerza una proporción fija ancho/alto en cualquier elemento. Antes había que hacer el "padding
+      hack"; ahora es una línea: <code>aspect-ratio: 16 / 9</code>.
+    </p>
+
+    <CodeExample
+      title="Mecánica: tres ratios distintos"
+      height="220px"
+      html={`<div class="grid">
+  <div class="r1">1:1</div>
+  <div class="r2">16:9</div>
+  <div class="r3">4:5</div>
+</div>`}
+      css={`.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  font-family: monospace;
+}
+.grid > div {
+  background: #1c1f23;
+  color: #6dff8a;
+  display: grid;
+  place-items: center;
+  border: 1px solid #2a2d31;
+}
+.r1 { aspect-ratio: 1 / 1; }
+.r2 { aspect-ratio: 16 / 9; }
+.r3 { aspect-ratio: 4 / 5; }`}
+    />
+
+    <CodeExample
+      title="En landing: thumbnail de vídeo 16:9 responsive"
+      height="220px"
+      html={`<div class="video">
+  <div class="play">▶</div>
+</div>`}
+      css={`.video {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 16 / 9;
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+  display: grid;
+  place-items: center;
+  margin-inline: auto;
+}
+.play {
+  color: #6dff8a;
+  font-size: 32px;
+  font-family: monospace;
+}`}
+    />
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        Si pones <strong>también <code>height</code></strong>, gana <code>height</code> y se ignora el
+        ratio. Define solo uno de los dos lados.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* IMÁGENES                                                    */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="imagenes" class="subsection">
+    <h2>Imágenes</h2>
+    <p>
+      Cómo encajan las imágenes en su contenedor. Las dos propiedades clave:
+      <code>object-fit</code> y <code>object-position</code>.
+    </p>
+
+    <h3><code>object-fit</code></h3>
+    <ul class="bullet-list">
+      <li>
+        <code>cover</code> — llena el contenedor, recorta lo que sobra. Lo más usado en landings.
+      </li>
+      <li><code>contain</code> — encaja entera dentro, deja espacio si hace falta.</li>
+      <li><code>fill</code> — deforma para llenar (rara vez deseado).</li>
+      <li><code>none</code> — tamaño original, ignora el contenedor.</li>
+    </ul>
+
+    <CodeExample
+      title="Mecánica: cover vs contain en mismo contenedor"
+      height="200px"
+      html={`<div class="row">
+  <div class="frame">
+    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='80' viewBox='0 0 240 80'><rect width='240' height='80' fill='%236dff8a'/><text x='50%' y='50%' fill='%230d0f0d' font-family='monospace' text-anchor='middle' dy='.3em'>240x80</text></svg>" class="cover" alt="" />
+    <p>cover</p>
+  </div>
+  <div class="frame">
+    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='80' viewBox='0 0 240 80'><rect width='240' height='80' fill='%236dff8a'/><text x='50%' y='50%' fill='%230d0f0d' font-family='monospace' text-anchor='middle' dy='.3em'>240x80</text></svg>" class="contain" alt="" />
+    <p>contain</p>
+  </div>
+</div>`}
+      css={`.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  font-family: monospace;
+}
+.frame {
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+}
+.frame img {
+  width: 100%;
+  height: 100px;
+  display: block;
+}
+.cover { object-fit: cover; }
+.contain { object-fit: contain; }
+.frame p {
+  margin: 0;
+  padding: 4px 8px;
+  color: #6dff8a;
+  font-size: 12px;
+}`}
+    />
+
+    <h3><code>object-position</code></h3>
+    <p>
+      Controla qué parte de la imagen se ve cuando <code>object-fit</code> recorta. Acepta keywords (<code
+        >top</code
+      >, <code>center</code>...) o porcentajes/valores.
+    </p>
+
+    <h3>Otros tips</h3>
+    <ul class="bullet-list">
+      <li>
+        Imágenes siempre con <code>width</code> y <code>height</code> en el HTML (aunque luego las cambies
+        con CSS) — evita layout shift mientras cargan.
+      </li>
+      <li>
+        <code>loading="lazy"</code> en imágenes que no estén above-the-fold.
+      </li>
+      <li>
+        <code>img &#123; max-width: 100%; height: auto; &#125;</code> como base global para que nunca
+        se desborden.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* GRADIENTES                                                  */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="gradientes" class="subsection">
+    <h2>Gradientes</h2>
+    <p>
+      Tres tipos: <code>linear-gradient</code>, <code>radial-gradient</code> y
+      <code>conic-gradient</code>. Funcionan como <code>background</code> (también como
+      <code>background-image</code>, lo que permite mezclarlos con colores).
+    </p>
+
+    <CodeExample
+      title="Mecánica: los tres tipos"
+      height="180px"
+      html={`<div class="grid">
+  <div class="linear">linear</div>
+  <div class="radial">radial</div>
+  <div class="conic">conic</div>
+</div>`}
+      css={`.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  font-family: monospace;
+}
+.grid > div {
+  height: 120px;
+  display: grid;
+  place-items: center;
+  color: #0d0f0d;
+  font-weight: bold;
+}
+.linear {
+  background: linear-gradient(135deg, #6dff8a, #ffb84a);
+}
+.radial {
+  background: radial-gradient(circle at 30% 30%, #6dff8a, #0d0f0d);
+  color: #6dff8a;
+}
+.conic {
+  background: conic-gradient(from 0deg, #6dff8a, #ffb84a, #6ec1e4, #6dff8a);
+}`}
+    />
+
+    <CodeExample
+      title="En landing: hero con overlay degradado sobre imagen"
+      height="220px"
+      html={`<section class="hero">
+  <h1>Título sobre imagen</h1>
+  <p>Subtítulo legible gracias al gradiente</p>
+</section>`}
+      css={`.hero {
+  position: relative;
+  height: 200px;
+  padding: 24px;
+  background:
+    linear-gradient(180deg, rgba(13,15,13,0) 0%, rgba(13,15,13,0.9) 100%),
+    radial-gradient(circle at 30% 30%, #6dff8a, #0d0f0d 70%);
+  color: #e8e8e3;
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 4px;
+}
+.hero h1 { margin: 0; font-size: 24px; }
+.hero p { margin: 4px 0 0; color: #8a8a85; }`}
+    />
+
+    <h3>Tips útiles</h3>
+    <ul class="bullet-list">
+      <li>
+        Apilar gradientes y colores: <code>background</code> acepta varias capas separadas por coma. La
+        primera va encima.
+      </li>
+      <li>
+        Para texto con gradiente: <code>background-clip: text</code> + <code
+          >color: transparent</code
+        >.
+      </li>
+      <li>Para suavizar bandas en gradientes oscuros, añade puntos intermedios con porcentajes.</li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* SOMBRAS                                                     */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="sombras" class="subsection">
+    <h2>Sombras</h2>
+    <p>
+      Tres herramientas según qué quieres sombrear:
+      <code>box-shadow</code> (la caja del elemento),
+      <code>text-shadow</code> (el texto),
+      <code>filter: drop-shadow()</code> (la forma real, incluido SVG con transparencias).
+    </p>
+
+    <h3><code>box-shadow</code></h3>
+    <p>
+      Sintaxis: <code>x y blur spread color</code>. Puedes apilar varias separadas por coma para
+      crear sombras más realistas o efectos de neón.
+    </p>
+
+    <CodeExample
+      title="Mecánica: una sombra simple"
+      height="180px"
+      html={`<div class="card">Card con sombra</div>`}
+      css={`.card {
+  background: #1c1f23;
+  color: #e8e8e3;
+  padding: 24px;
+  margin: 16px;
+  width: 200px;
+  font-family: monospace;
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+  border: 1px solid #2a2d31;
+}`}
+    />
+
+    <InteractionHint>Pasa el ratón por encima del botón para ver el glow.</InteractionHint>
+
+    <CodeExample
+      title="En landing: CTA con glow al hover"
+      height="160px"
+      html={`<button class="cta">Empezar gratis</button>`}
+      css={`.cta {
+  background: #6dff8a;
+  color: #0d0f0d;
+  border: none;
+  padding: 14px 28px;
+  font-family: monospace;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+.cta:hover {
+  box-shadow: 0 0 24px rgba(109, 255, 138, 0.6);
+  transform: translateY(-2px);
+}`}
+    />
+
+    <h3>Sombras múltiples y profundidad</h3>
+    <CodeExample
+      title="Apilar dos sombras para profundidad realista"
+      height="180px"
+      html={`<div class="card">Profundidad realista</div>`}
+      css={`.card {
+  background: #1c1f23;
+  color: #e8e8e3;
+  padding: 24px;
+  margin: 16px;
+  width: 220px;
+  font-family: monospace;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 8px 24px -4px rgba(0, 0, 0, 0.5);
+}`}
+    />
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* BACKDROP FILTER                                             */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="backdrop" class="subsection">
+    <h2>Backdrop filter</h2>
+    <p>
+      Aplica un filtro (blur, saturación, contraste...) a lo que hay <em>detrás</em> del elemento. Es
+      el efecto "glassmorphism" que se ve en barras translúcidas modernas (macOS, Apple, Linear...).
+    </p>
+
+    <CodeExample
+      title="En landing: header translúcido sobre contenido"
+      height="220px"
+      html={`<div class="page">
+  <header class="glass">>_ marca</header>
+  <div class="content">
+    <h1>Hero detrás</h1>
+    <p>Mira cómo se difumina sin perder color.</p>
+  </div>
+</div>`}
+      css={`.page {
+  position: relative;
+  height: 200px;
+  background:
+    radial-gradient(circle at 30% 40%, #6dff8a 0%, transparent 50%),
+    radial-gradient(circle at 70% 60%, #ffb84a 0%, transparent 50%),
+    #0d0f0d;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+.glass {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  padding: 12px 16px;
+  color: #e8e8e3;
+  font-family: monospace;
+  background: rgba(13, 15, 13, 0.4);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.content {
+  padding: 48px 16px 16px;
+  color: #e8e8e3;
+}
+.content h1 { margin: 0; font-size: 20px; }
+.content p { margin: 4px 0 0; color: #c8c8c5; font-size: 13px; }`}
+    />
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        Requiere que el elemento tenga un <strong>background semi-transparente</strong> — si es opaco,
+        no se ve nada detrás que filtrar.
+      </li>
+      <li>
+        Coste de rendimiento alto si lo aplicas a áreas muy grandes. Para móvil de gama baja,
+        considera quitarlo con <code>@media</code>.
+      </li>
+      <li>
+        Safari soporta <code>backdrop-filter</code> con prefijo <code>-webkit-</code>; añade ambos.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* FUENTES WEB                                                 */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="fuentes" class="subsection">
+    <h2>Fuentes web</h2>
+    <p>
+      Dos formas: cargar desde un servicio (Google Fonts, Fontsource) o autoalojar con
+      <code>@font-face</code>. Para landings rápidas, <strong>autoalojar</strong> suele ser mejor: menos
+      peticiones externas, control total sobre el formato y mejor privacidad.
+    </p>
+
+    <h3><code>@font-face</code></h3>
+    <CodeExample
+      title="Cargar una fuente local"
+      showHtml={false}
+      html={`<p>Fuente cargada desde el propio sitio.</p>`}
+      css={`@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+}`}
+    />
+
+    <h3>Reglas clave</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Formato <code>woff2</code></strong> — el único que necesitas en 2026.
+      </li>
+      <li>
+        <strong><code>font-display: swap</code></strong> — muestra una fuente fallback hasta que cargue
+        la web font. Evita FOIT (texto invisible).
+      </li>
+      <li>
+        <strong>Preload</strong> en el HTML para fuentes críticas:
+        <code
+          >&lt;link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2"
+          crossorigin&gt;</code
+        >.
+      </li>
+      <li>
+        <strong>Variable fonts</strong> — un solo archivo cubre todos los pesos.
+        <code>font-weight: 400 700</code> indica el rango disponible.
+      </li>
+      <li>
+        Define <strong>system-ui</strong> como fallback decente:
+        <code>font-family: 'Inter', system-ui, sans-serif;</code>.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* RESPONSIVE                                                  */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="responsive" class="subsection">
+    <h2>Responsive</h2>
+    <p>
+      Hacer que la landing se vea bien en cualquier tamaño. Filosofía moderna:
+      <strong>mobile-first</strong> — escribe estilos pensando en móvil y añade media queries para pantallas
+      más grandes.
+    </p>
+
+    <h3>Meta viewport (imprescindible en el HTML)</h3>
+    <CodeExample
+      title="Sin esto, los móviles renderizan como desktop reducido"
+      showCss={false}
+      html={`<meta name="viewport" content="width=device-width, initial-scale=1" />`}
+    />
+
+    <h3>Media queries</h3>
+    <CodeExample
+      title="Mobile-first: 1 → 2 → 3 columnas"
+      showHtml={false}
+      html={`<div class="grid"><div>A</div><div>B</div><div>C</div></div>`}
+      css={`/* Móvil: base */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .grid { grid-template-columns: 1fr 1fr 1fr; }
+}`}
+    />
+
+    <h3>Container queries (responsive por componente)</h3>
+    <p>
+      Adaptan estilos al ancho del <strong>contenedor</strong>, no del viewport. Útiles cuando un
+      componente vive en sitios distintos (sidebar estrecha vs main ancho).
+    </p>
+
+    <InteractionHint
+      >Redimensiona la ventana: la card cambia layout según su ancho propio.</InteractionHint
+    >
+
+    <CodeExample
+      title="En landing: card que se reorganiza por su propio ancho"
+      height="240px"
+      html={`<div class="card">
+  <div class="thumb">img</div>
+  <div class="body">
+    <h3>Card adaptable</h3>
+    <p>Cuando hay sitio, se pone en horizontal.</p>
+  </div>
+</div>`}
+      css={`.card {
+  container-type: inline-size;
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+  border-radius: 4px;
+  padding: 16px;
+  font-family: sans-serif;
+  color: #e8e8e3;
+}
+.card .thumb {
+  width: 100%;
+  height: 80px;
+  background: #6dff8a;
+  color: #0d0f0d;
+  display: grid;
+  place-items: center;
+  font-family: monospace;
+  margin-block-end: 12px;
+}
+.card h3 { margin: 0 0 4px; color: #6dff8a; font-family: monospace; font-size: 14px; }
+.card p { margin: 0; font-size: 13px; color: #8a8a85; }
+
+@container (min-width: 360px) {
+  .card { display: grid; grid-template-columns: 100px 1fr; gap: 16px; align-items: center; }
+  .card .thumb { margin: 0; height: 100%; }
+}`}
+    />
+
+    <h3>Trucos sin media queries</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>repeat(auto-fit, minmax(220px, 1fr))</code> en grid — columnas responsive auto.
+      </li>
+      <li>
+        <code>clamp(min, ideal, max)</code> en tipografía — escala fluida sin saltos.
+      </li>
+      <li>
+        <code>flex-wrap: wrap</code> con <code>gap</code> — items que saltan de línea solos.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* VARIABLES CSS                                               */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="variables" class="subsection">
+    <h2>Variables CSS (custom properties)</h2>
+    <p>
+      Variables nativas del navegador. Permiten reutilizar valores, tematizar y cambiar estilos en
+      runtime sin recompilar nada.
+    </p>
+
+    <h3>Declarar y usar</h3>
+    <p>
+      Se declaran con <code>--nombre</code> (típicamente en <code>:root</code> para que sean globales)
+      y se leen con <code>var(--nombre)</code>. Aceptan fallback:
+      <code>var(--color, #fff)</code>.
+    </p>
+
+    <CodeExample
+      title="Patrón profesional: un .btn, dos variantes redefiniendo solo tokens"
+      height="160px"
+      html={`<button class="btn">Primario</button>
+<button class="btn btn-warm">Cálido</button>`}
+      css={`/* 1. Tokens en :root */
+:root {
+  --btn-color: #6dff8a;
+  --btn-bg: #0d0f0d;
+}
+
+/* 2. La clase .btn solo pinta con var(), nunca con hex */
+.btn {
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  border: 1px solid var(--btn-color);
+  padding: 8px 16px;
+  font-family: monospace;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+/* 3. La variante solo redefine los tokens.
+      Las reglas de .btn no se duplican. */
+.btn-warm {
+  --btn-color: #ffb84a;
+}`}
+    />
+
+    <h3>Scope: las variables se heredan</h3>
+    <p>
+      Funcionan como el resto del CSS heredable. Redefinirlas en un selector más interno solo afecta
+      a esa rama del DOM. Esta es la base del modo claro/oscuro.
+    </p>
+
+    <CodeExample
+      title="Modo claro/oscuro con variables"
+      height="200px"
+      html={`<div class="theme dark">
+  <div class="panel">Dark</div>
+</div>
+<div class="theme light">
+  <div class="panel">Light</div>
+</div>`}
+      css={`.theme.dark  { --bg: #0d0f0d; --fg: #e8e8e3; --accent: #6dff8a; }
+.theme.light { --bg: #f5f5f0; --fg: #161616; --accent: #00744f; }
+
+.panel {
+  background: var(--bg);
+  color: var(--fg);
+  border-left: 4px solid var(--accent);
+  padding: 12px 16px;
+  margin: 4px 0;
+  font-family: monospace;
+}`}
+    />
+
+    <h3>Cambiar variables en JS (runtime)</h3>
+    <p>
+      Acceso desde JavaScript con <code>element.style.setProperty('--color', '#f00')</code> y lectura
+      con <code>getComputedStyle(el).getPropertyValue('--color')</code>. Útil para temas dinámicos o
+      color pickers en directo.
+    </p>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* NESTING                                                     */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="nesting" class="subsection">
+    <h2>CSS Nesting (anidamiento nativo)</h2>
+    <p>
+      Ya no hace falta SASS para anidar selectores: el navegador lo soporta nativamente. El
+      <code>&amp;</code> representa el selector padre, exactamente como en preprocesadores.
+    </p>
+
+    <CodeExample
+      title="Mecánica: anidar reglas y pseudo-clases"
+      height="160px"
+      html={`<button class="btn">Botón</button>`}
+      css={`.btn {
+  background: #6dff8a;
+  color: #0d0f0d;
+  padding: 10px 20px;
+  font-family: monospace;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: #ffb84a;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #6ec1e4;
+    outline-offset: 2px;
+  }
+}`}
+    />
+
+    <CodeExample
+      title="En landing: card con todo anidado"
+      height="220px"
+      html={`<article class="card">
+  <h3>Título</h3>
+  <p>Descripción de la card.</p>
+  <a class="link">Ver más →</a>
+</article>`}
+      css={`.card {
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+  padding: 20px;
+  font-family: sans-serif;
+  color: #e8e8e3;
+
+  & h3 {
+    margin: 0 0 8px;
+    color: #6dff8a;
+    font-family: monospace;
+    font-size: 14px;
+  }
+
+  & p {
+    margin: 0 0 12px;
+    color: #8a8a85;
+    font-size: 14px;
+  }
+
+  & .link {
+    color: #6dff8a;
+    font-family: monospace;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover { color: #ffb84a; }
+  }
+}`}
+    />
+
+    <h3>Cuándo es útil (y cuándo no)</h3>
+    <ul class="bullet-list">
+      <li>Útil para mantener junto todo lo que afecta a un componente.</li>
+      <li>
+        No anides más de 2-3 niveles — el CSS resultante tiene especificidad alta y es difícil de
+        sobreescribir.
+      </li>
+      <li>
+        El <code>&amp;</code> es necesario antes de pseudo-clases dentro del nesting nativo (en SASS no
+        lo era).
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* CASCADE LAYERS                                              */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="layer" class="subsection">
+    <h2>Cascade layers (<code>@layer</code>)</h2>
+    <p>
+      Permiten controlar el orden de la cascada agrupando reglas en capas. Una regla en una capa
+      <em>posterior</em> gana siempre sobre una capa anterior, sin importar la especificidad.
+    </p>
+
+    <p>
+      Para verlo claro, comparamos dos botones idénticos con las <strong>mismas dos clases</strong>{' '}
+      (<code>btn</code> + <code>highlight</code>) y las <strong>mismas dos reglas</strong> en
+      conflicto: una más específica (oscura), otra menos específica (verde). La única diferencia
+      entre el caso A y el B es si esas reglas están sueltas o dentro de <code>@layer</code>.
+    </p>
+
+    <CodeExample
+      title="Sin layers vs con layers — mismo HTML, mismas reglas, distinto ganador"
+      height="220px"
+      html={`<div class="row">
+  <div class="col">
+    <p class="label">Sin layers ↓</p>
+    <button class="btn-a highlight-a">Botón</button>
+    <p class="note">.btn-a.highlight-a gana<br>(2 clases pesan más)</p>
+  </div>
+  <div class="col">
+    <p class="label">Con layers ↓</p>
+    <button class="btn-b highlight-b">Botón</button>
+    <p class="note">.highlight-b gana<br>(capa posterior &gt; especificidad)</p>
+  </div>
+</div>`}
+      css={`/* ─── A) SIN layers: manda la especificidad ─── */
+.btn-a.highlight-a {     /* 2 clases */
+  background: #1c1f23;
+  color: #e8e8e3;
+}
+.highlight-a {           /* 1 clase */
+  background: #6dff8a;
+  color: #0d0f0d;
+}
+
+/* ─── B) CON layers: manda el orden de capas ─── */
+@layer components, utilities;
+
+@layer components {
+  .btn-b.highlight-b {   /* 2 clases, pero capa anterior */
+    background: #1c1f23;
+    color: #e8e8e3;
+  }
+}
+@layer utilities {
+  .highlight-b {         /* 1 clase, pero capa posterior → GANA */
+    background: #6dff8a;
+    color: #0d0f0d;
+  }
+}
+
+/* Layout del preview, no relevante para el concepto */
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: monospace; }
+.col { text-align: center; }
+.label { margin: 0 0 8px; color: #6dff8a; font-size: 12px; }
+.note { margin: 8px 0 0; color: #8a8a85; font-size: 11px; line-height: 1.4; }
+.btn-a, .btn-b {
+  padding: 8px 16px;
+  font-family: monospace;
+  border: none;
+  cursor: pointer;
+}`}
+    />
+
+    <h3>Cuándo usarlas</h3>
+    <ul class="bullet-list">
+      <li>
+        Importar CSS de terceros con <code>@import url(...) layer(vendor)</code> — así sus estilos nunca
+        pisan los tuyos.
+      </li>
+      <li>
+        Organizar grandes proyectos: <code>@layer reset, foundations, components, utilities;</code>
+      </li>
+      <li>
+        Estilos sin <code>@layer</code> ganan sobre cualquier capa. Útil para overrides puntuales.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* ANIMACIONES                                                 */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="animaciones" class="subsection">
+    <h2>Animaciones</h2>
+    <p>
+      Dos herramientas: <code>transition</code> (interpola entre dos estados, ideal para hover) y
+      <code>animation</code> + <code>@keyframes</code> (secuencias completas, pueden loopear).
+    </p>
+
+    <h3><code>transition</code></h3>
+    <p>
+      Sintaxis: <code>transition: propiedad duración curva delay</code>. Se aplica entre el estado
+      base y otro estado (típicamente <code>:hover</code> o un cambio de clase).
+    </p>
+
+    <InteractionHint>Pasa el ratón por encima del botón.</InteractionHint>
+
+    <CodeExample
+      title="Mecánica: hover con transición múltiple"
+      height="160px"
+      html={`<button class="cta">Pulsa</button>`}
+      css={`.cta {
+  background: #6dff8a;
+  color: #0d0f0d;
+  padding: 12px 24px;
+  border: none;
+  font-family: monospace;
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+    transform 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease;
+}
+.cta:hover {
+  transform: translateY(-2px);
+  background: #ffb84a;
+  box-shadow: 0 8px 16px -4px rgba(255, 184, 74, 0.5);
+}`}
+    />
+
+    <h3><code>@keyframes</code> + <code>animation</code></h3>
+    <p>Para secuencias más complejas o loops infinitos.</p>
+
+    <CodeExample
+      title="Cursor parpadeante (el del logo del sitio)"
+      height="100px"
+      html={`<span class="prompt">$</span>
+<span class="cursor"></span>`}
+      css={`.prompt {
+  color: #6dff8a;
+  font-family: monospace;
+  font-size: 24px;
+}
+.cursor {
+  display: inline-block;
+  width: 12px;
+  height: 24px;
+  background: #6dff8a;
+  vertical-align: middle;
+  animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink {
+  to { visibility: hidden; }
+}`}
+    />
+
+    <InteractionHint
+      >Pasa el ratón por encima de la card para ver el efecto de entrada.</InteractionHint
+    >
+
+    <CodeExample
+      title="En landing: card con entrada animada al hover"
+      height="200px"
+      html={`<article class="card">
+  <h3>Feature</h3>
+  <p>Hover sobre mí.</p>
+  <span class="arrow">→</span>
+</article>`}
+      css={`.card {
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+  padding: 20px;
+  width: 220px;
+  font-family: monospace;
+  color: #e8e8e3;
+  cursor: pointer;
+  transition: border-color 200ms ease, transform 200ms ease;
+}
+.card h3 { margin: 0 0 8px; color: #6dff8a; font-size: 14px; }
+.card p { margin: 0 0 8px; font-size: 13px; color: #8a8a85; }
+.card .arrow {
+  color: #6dff8a;
+  display: inline-block;
+  transition: transform 200ms ease;
+}
+.card:hover {
+  border-color: #6dff8a;
+  transform: translateY(-2px);
+}
+.card:hover .arrow {
+  transform: translateX(4px);
+}`}
+    />
+
+    <h3>Curvas de easing</h3>
+    <ul class="bullet-list">
+      <li><code>ease</code> — arranca rápido, frena. Genérica.</li>
+      <li><code>linear</code> — velocidad constante. Loaders, rotaciones.</li>
+      <li><code>ease-out</code> — la mejor para elementos que entran a la pantalla.</li>
+      <li>
+        <code>cubic-bezier(...)</code> — curva custom. Hay editores visuales como cubic-bezier.com.
+      </li>
+    </ul>
+
+    <h3>Accesibilidad: <code>prefers-reduced-motion</code></h3>
+    <CodeExample
+      title="Respeta a quienes prefieren menos movimiento"
+      showHtml={false}
+      html={`<p>Aplicado a todo el sitio.</p>`}
+      css={`@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}`}
+    />
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Animar <code>width</code>/<code>height</code></strong> — caro, fuerza reflow. Anima
+        <code>transform</code> y <code>opacity</code> siempre que puedas.
+      </li>
+      <li>
+        <strong>Sin estado inicial</strong> — para <code>transition</code> necesitas dos estados. Si el
+        <code>:hover</code> tiene <code>background: red</code> pero el base no, no hay nada entre lo que
+        interpolar.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* SCROLL SNAP                                                 */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="scroll-snap" class="subsection">
+    <h2>Scroll snap</h2>
+    <p>
+      Hace que el scroll "encaje" en posiciones concretas — perfecto para carruseles horizontales y
+      secciones a pantalla completa. Solo CSS, sin librerías.
+    </p>
+
+    <InteractionHint>Haz scroll horizontal dentro del carrusel.</InteractionHint>
+
+    <CodeExample
+      title="En landing: carrusel horizontal con snap"
+      height="220px"
+      html={`<div class="carousel">
+  <div>1</div><div>2</div><div>3</div><div>4</div>
+</div>`}
+      css={`.carousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 8px;
+  background: #15171a;
+  border: 1px solid #2a2d31;
+  font-family: monospace;
+}
+.carousel > div {
+  scroll-snap-align: start;
+  flex: 0 0 70%;
+  height: 140px;
+  background: #6dff8a;
+  color: #0d0f0d;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 4px;
+}`}
+    />
+
+    <h3>Propiedades clave</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>scroll-snap-type: x mandatory</code> — en el contenedor. <code>mandatory</code>
+        siempre encaja, <code>proximity</code> solo si está cerca.
+      </li>
+      <li>
+        <code>scroll-snap-align: start | center | end</code> — en cada hijo, dónde encaja.
+      </li>
+      <li>
+        <code>scroll-padding</code> — espacio que respeta al encajar (útil si tienes header sticky).
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* PSEUDO-CLASES Y PSEUDO-ELEMENTOS                            */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="pseudo" class="subsection">
+    <h2>Pseudo-clases y pseudo-elementos</h2>
+    <p>
+      Las <strong>pseudo-clases</strong> (con <code>:</code>) seleccionan elementos según su estado
+      o posición. Los <strong>pseudo-elementos</strong> (con <code>::</code>) crean partes virtuales
+      del elemento que se pueden estilar.
+    </p>
+
+    <h3>Pseudo-clases de estado</h3>
+    <ul class="bullet-list">
+      <li><code>:hover</code> — el cursor está encima.</li>
+      <li><code>:focus</code> — el elemento tiene foco (teclado o click).</li>
+      <li>
+        <code>:focus-visible</code> — foco <em>solo</em> cuando viene del teclado. La que quieres para
+        outlines accesibles.
+      </li>
+      <li><code>:active</code> — mientras se está clickando.</li>
+      <li><code>:disabled</code> / <code>:checked</code> — estados de inputs y checkboxes.</li>
+    </ul>
+
+    <InteractionHint>Haz click en el input y prueba a navegar con TAB desde fuera.</InteractionHint>
+
+    <CodeExample
+      title="Input con :hover, :focus-visible y :invalid"
+      height="160px"
+      html={`<input type="email" placeholder="tu@email.com" required />`}
+      css={`input {
+  background: #1c1f23;
+  color: #e8e8e3;
+  border: 1px solid #2a2d31;
+  padding: 8px 12px;
+  font-family: monospace;
+  transition: border-color 200ms ease;
+}
+input:hover { border-color: #8a8a85; }
+input:focus-visible {
+  outline: 2px solid #6dff8a;
+  outline-offset: 2px;
+  border-color: #6dff8a;
+}
+input:invalid:not(:placeholder-shown) {
+  border-color: #ff6b6b;
+}`}
+    />
+
+    <h3>Pseudo-clases estructurales</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>:first-child</code> / <code>:last-child</code> — primer / último hijo del padre.
+      </li>
+      <li><code>:nth-child(2n)</code> — patrón (pares, impares, cada 3...).</li>
+      <li><code>:not(.activo)</code> — niega otro selector.</li>
+      <li>
+        <code>:is(h1, h2, h3)</code> — agrupa selectores (especificidad = la del más alto).
+      </li>
+      <li>
+        <code>:where(...)</code> — como <code>:is</code> pero con especificidad 0. Ideal para resets.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Filas alternas con :nth-child(odd)"
+      height="200px"
+      html={`<ul class="lista">
+  <li>Fila 1</li>
+  <li>Fila 2</li>
+  <li>Fila 3</li>
+  <li>Fila 4</li>
+</ul>`}
+      css={`.lista { list-style: none; padding: 0; margin: 0; font-family: monospace; }
+.lista li {
+  padding: 8px 12px;
+  color: #e8e8e3;
+}
+.lista li:nth-child(odd) {
+  background: #1c1f23;
+}
+.lista li:first-child {
+  color: #6dff8a;
+}`}
+    />
+
+    <h3>Pseudo-elementos: <code>::before</code> y <code>::after</code></h3>
+    <p>
+      Crean contenido virtual dentro del elemento. Necesitan <code>content</code> (aunque sea vacío).
+      Útiles para iconos decorativos, comillas, viñetas, separadores y efectos.
+    </p>
+
+    <CodeExample
+      title="Bullets retro con ::before (como en este sitio)"
+      height="200px"
+      html={`<ul class="check">
+  <li>Limpio</li>
+  <li>Accesible</li>
+  <li>Responsive</li>
+</ul>`}
+      css={`.check { list-style: none; padding: 0; margin: 0; font-family: monospace; }
+.check li {
+  position: relative;
+  padding-inline-start: 24px;
+  color: #e8e8e3;
+  margin-block-end: 6px;
+}
+.check li::before {
+  content: '›';
+  position: absolute;
+  inset-inline-start: 0;
+  color: #6dff8a;
+  font-weight: bold;
+}`}
+    />
+
+    <h3>Otros pseudo-elementos útiles</h3>
+    <ul class="bullet-list">
+      <li><code>::placeholder</code> — estiliza el placeholder de inputs.</li>
+      <li><code>::selection</code> — color del texto seleccionado.</li>
+      <li><code>::marker</code> — la viñeta de las listas.</li>
+      <li>
+        <code>::first-letter</code> / <code>::first-line</code> — primera letra/línea (efecto capitular).
+      </li>
+      <li>
+        <code>::backdrop</code> — el fondo oscuro de un <code>&lt;dialog&gt;</code> abierto.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* :has()                                                      */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="has" class="subsection">
+    <h2><code>:has()</code> — el selector padre</h2>
+    <p>
+      Lo que antes solo se podía hacer con JavaScript: estilar un elemento según lo que contiene.
+      <code>:has(...)</code> permite "selecciona X si dentro tiene Y". Es uno de los superpoderes del
+      CSS moderno.
+    </p>
+
+    <CodeExample
+      title="Mecánica: card resaltada si dentro hay un .pro"
+      height="200px"
+      html={`<article class="card">
+  <h3>Plan básico</h3>
+  <p>9€/mes</p>
+</article>
+<article class="card">
+  <h3>Plan premium</h3>
+  <p>29€/mes</p>
+  <span class="pro">PRO</span>
+</article>`}
+      css={`.card {
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+  padding: 16px;
+  margin-block-end: 8px;
+  font-family: monospace;
+  color: #e8e8e3;
+}
+.card h3 { margin: 0 0 4px; color: #6dff8a; font-size: 14px; }
+.card p { margin: 0; font-size: 13px; color: #8a8a85; }
+.pro {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 6px;
+  background: #ffb84a;
+  color: #0d0f0d;
+  font-size: 11px;
+}
+
+/* Si la card contiene un .pro, se resalta */
+.card:has(.pro) {
+  border-color: #ffb84a;
+  box-shadow: 0 0 24px -8px #ffb84a;
+}`}
+    />
+
+    <InteractionHint>Haz click en el checkbox para ver cómo cambia el formulario.</InteractionHint>
+
+    <CodeExample
+      title="En landing: form que cambia si hay un input :checked"
+      height="220px"
+      html={`<form class="signup">
+  <label>
+    <input type="checkbox" />
+    Quiero recibir novedades
+  </label>
+  <input type="email" placeholder="tu@email.com" />
+  <button type="button">Suscribirme</button>
+</form>`}
+      css={`.signup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: #1c1f23;
+  border: 1px solid #2a2d31;
+  font-family: monospace;
+  color: #e8e8e3;
+  transition: border-color 200ms ease;
+}
+.signup input[type="email"], .signup button {
+  padding: 8px 12px;
+  background: #15171a;
+  color: #e8e8e3;
+  border: 1px solid #2a2d31;
+  font-family: monospace;
+}
+.signup button {
+  background: #6dff8a;
+  color: #0d0f0d;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Si dentro hay un checkbox marcado, el form se ilumina */
+.signup:has(input[type="checkbox"]:checked) {
+  border-color: #6dff8a;
+  box-shadow: 0 0 24px -8px #6dff8a;
+}`}
+    />
+
+    <h3>Otros usos potentes</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>nav:has(.active)</code> — estilar el nav cuando uno de sus links está activo.
+      </li>
+      <li>
+        <code>label:has(input:focus)</code> — animar la label cuando el input dentro recibe foco.
+      </li>
+      <li>
+        <code>body:has(dialog[open])</code> — bloquear el scroll del body cuando un modal está abierto.
+      </li>
+      <li>
+        <code>.card:not(:has(img))</code> — cards SIN imagen reciben estilos distintos.
+      </li>
+    </ul>
+  </section>
+</SectionLayout>

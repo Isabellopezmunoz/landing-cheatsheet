@@ -1,0 +1,86 @@
+/*
+ * GLOBAL
+ * Estilos base aplicados a todo el sitio.
+ * Orden importa: foundations (tokens) → reset → estilos base.
+ */
+
+@import './foundations.css';
+@import './reset.css';
+@import './sections.css';
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+}
+
+/* ─── Tipografía base ──────────────────────────────────── */
+
+h1 {
+  font-size: var(--text-3xl);
+  letter-spacing: var(--tracking-tight);
+}
+
+h2 {
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-tight);
+}
+
+h3 {
+  font-size: var(--text-xl);
+}
+
+h4 {
+  font-size: var(--text-lg);
+}
+
+p {
+  max-width: var(--max-width-prose);
+}
+
+/* Texto monoespaciado: para etiquetas tipo "[ SYSTEM GUARANTEE ]",
+   código inline, paths, comandos... */
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+}
+
+/* ─── Enlaces ──────────────────────────────────────────── */
+
+a {
+  color: var(--accent);
+  transition: opacity var(--transition-fast);
+}
+
+a:hover {
+  opacity: 0.75;
+}
+
+/* ─── Selección de texto ──────────────────────────────── */
+
+::selection {
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+/* ─── Foco accesible ──────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ─── Utilidad: contenedor central ────────────────────── */
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}

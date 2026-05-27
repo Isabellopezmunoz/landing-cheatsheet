@@ -1,0 +1,133 @@
+---
+const sections = [
+  { label: 'HTML', href: '/html' },
+  { label: 'CSS', href: '/css' },
+  { label: 'Accesibilidad', href: '/a11y' },
+  { label: 'SEO', href: '/seo' },
+]
+
+const currentPath = Astro.url.pathname
+---
+
+<header class="site-header">
+  <div class="inner">
+    <a href="/" class="brand" aria-label="Inicio — cheatsheet">
+      <span class="brand-prompt" aria-hidden="true">&gt;_</span>
+      <span class="brand-name">cheatsheet</span>
+      <span class="brand-cursor" aria-hidden="true"></span>
+    </a>
+
+    <nav aria-label="Secciones principales">
+      <ul role="list" class="nav-list">
+        {
+          sections.map((section) => {
+            const isActive = currentPath.startsWith(section.href)
+            return (
+              <li>
+                <a
+                  href={section.href}
+                  class:list={['nav-link', { active: isActive }]}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {section.label}
+                </a>
+              </li>
+            )
+          })
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--bg);
+    border-bottom: var(--border-width) solid var(--border);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+  }
+
+  .inner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding-inline: var(--space-8);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--fg);
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: lowercase;
+    line-height: 1;
+  }
+
+  .brand:hover {
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  .brand-prompt {
+    color: var(--accent);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .brand-name {
+    line-height: 1;
+  }
+
+  .brand-cursor {
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    background-color: var(--accent);
+    animation: blink 1s steps(2, start) infinite;
+    vertical-align: middle;
+    margin-left: 0.1em;
+  }
+
+  @keyframes blink {
+    to {
+      visibility: hidden;
+    }
+  }
+
+  .nav-list {
+    display: flex;
+    gap: var(--space-8);
+    list-style: none;
+  }
+
+  .nav-link {
+    color: var(--fg-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    transition: color var(--transition-fast);
+  }
+
+  .nav-link:hover {
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  .nav-link.active {
+    color: var(--accent);
+  }
+</style>
