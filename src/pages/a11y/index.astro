@@ -1,0 +1,1122 @@
+---
+import SectionLayout from '../../layouts/SectionLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import InteractionHint from '../../components/InteractionHint.astro'
+
+const subsections = [
+  { id: 'por-que', label: 'Por qué importa' },
+  { id: 'semantica', label: 'Semántica > ARIA' },
+  { id: 'texto-alt', label: 'Texto alternativo' },
+  { id: 'foco-teclado', label: 'Foco y teclado' },
+  { id: 'contraste', label: 'Contraste y color' },
+  { id: 'movimiento', label: 'Movimiento' },
+  { id: 'formularios', label: 'Formularios' },
+  { id: 'estados', label: 'Estados dinámicos' },
+  { id: 'oculto', label: 'Contenido oculto' },
+  { id: 'live', label: 'Live regions' },
+  { id: 'lectores', label: 'Lectores de pantalla' },
+  { id: 'modales', label: 'Modales y overlays' },
+  { id: 'idioma-zoom', label: 'Idioma y zoom' },
+  { id: 'herramientas', label: 'Herramientas' },
+  { id: 'checklist', label: 'Checklist' },
+]
+---
+
+<SectionLayout
+  title="Accesibilidad · landing-cheatsheet"
+  description="Referencia de accesibilidad web para construir landings: semántica, ARIA, foco, contraste, formularios accesibles."
+  sectionLabel="Accesibilidad"
+  subsections={subsections}
+>
+  <header class="page-header">
+    <p class="page-tag">[ SECCIÓN / ACCESIBILIDAD ]</p>
+    <h1>Accesibilidad</h1>
+    <p class="page-lead">
+      Diseñar y construir para que cualquier persona pueda usar la landing: con lector de pantalla,
+      solo con teclado, con baja visión, con epilepsia fotosensible, con conexión lenta… La
+      accesibilidad bien hecha mejora la UX para <strong>todo el mundo</strong>, no solo para
+      quienes tienen una discapacidad.
+    </p>
+  </header>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* POR QUÉ IMPORTA                                             */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="por-que" class="subsection">
+    <h2>Por qué importa</h2>
+    <p>
+      No es solo "lo correcto": es alcance real, SEO y a partir de 2026 también obligación legal en
+      muchos contextos.
+    </p>
+
+    <h3>Datos rápidos</h3>
+    <ul class="bullet-list">
+      <li>
+        ~<strong>15%</strong> de la población mundial tiene algún tipo de discapacidad (OMS).
+      </li>
+      <li>
+        En España, <strong>European Accessibility Act</strong> obliga a sitios de e-commerce, banca, transporte
+        y comunicaciones a ser accesibles desde junio de 2025.
+      </li>
+      <li>
+        Google posiciona mejor las páginas accesibles. Mucho de lo que es bueno para SEO también lo
+        es para a11y (semántica, alt, jerarquía de títulos).
+      </li>
+      <li>
+        Lo que ayuda a unos beneficia a todos: subtítulos para sordos = subtítulos en metros
+        ruidosos; alto contraste para baja visión = legible al sol.
+      </li>
+    </ul>
+
+    <h3>Estándares</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>WCAG 2.2</strong> — la referencia mundial. Tres niveles: A (mínimo), AA (objetivo habitual),
+        AAA (estricto).
+      </li>
+      <li>
+        <strong>WAI-ARIA</strong> — el set de atributos para describir UI dinámicas a tecnologías asistivas.
+      </li>
+      <li>
+        <strong>EN 301 549</strong> — norma europea que aplica WCAG AA al sector público y privado bajo
+        EAA.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* SEMÁNTICA > ARIA                                            */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="semantica" class="subsection">
+    <h2>Semántica antes que ARIA</h2>
+    <p>
+      <strong>Primera regla de ARIA</strong>: <em>no uses ARIA</em>. Si HTML ya tiene un elemento
+      para lo que quieres (un <code>&lt;button&gt;</code>, un <code>&lt;nav&gt;</code>, un
+      <code>&lt;dialog&gt;</code>), úsalo. Solo recurre a ARIA cuando el HTML no llegue.
+    </p>
+
+    <h3>El error más típico: <code>&lt;div onclick&gt;</code></h3>
+    <p>
+      Un <code>&lt;div&gt;</code> con un handler de click <strong>no</strong> es un botón. No recibe foco,
+      no se activa con teclado, no se anuncia como botón al lector de pantalla. Usa
+      <code>&lt;button&gt;</code>.
+    </p>
+
+    <CodeExample
+      title="Mal vs bien: un botón debe ser un <button>"
+      showCss={false}
+      html={`<!-- ❌ MAL: no es accesible -->
+<div class="btn" onclick="hacerAlgo()">Suscribirme</div>
+
+<!-- ✅ BIEN: enfocable, activable con teclado, anunciado correctamente -->
+<button type="button" onclick="hacerAlgo()">Suscribirme</button>`}
+    />
+
+    <h3>Etiquetas semánticas y su rol implícito</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>&lt;header&gt;</code> / <code>&lt;main&gt;</code> / <code>&lt;nav&gt;</code> /
+        <code>&lt;footer&gt;</code> — landmarks que el lector lista para navegar rápido.
+      </li>
+      <li>
+        <code>&lt;button&gt;</code> — botón con foco, activable por Enter y Espacio.
+      </li>
+      <li>
+        <code>&lt;a href&gt;</code> — link. Si no tiene <code>href</code>, no es un link real.
+      </li>
+      <li>
+        <code>&lt;dialog&gt;</code> — modal con foco-trap incluido.
+      </li>
+      <li>
+        <code>&lt;details&gt;</code> / <code>&lt;summary&gt;</code> — accordion nativo, accesible.
+      </li>
+    </ul>
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>"Es que con div lo estilo más fácil"</strong> — un <code>&lt;button&gt;</code> se puede
+        estilar igual: <code>button &#123; all: unset; cursor: pointer; &#125;</code> + tus estilos.
+      </li>
+      <li>
+        <strong>Cambiar el rol nativo con ARIA</strong> (<code>&lt;a role="button"&gt;</code>) —
+        creas inconsistencias. El elemento tiene comportamiento de link y dice que es botón. Usa el
+        elemento correcto.
+      </li>
+      <li>
+        <strong>Iconos sin nombre accesible</strong> — un botón con solo un SVG dentro necesita
+        <code>aria-label</code>.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* TEXTO ALTERNATIVO                                           */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="texto-alt" class="subsection">
+    <h2>Texto alternativo</h2>
+    <p>
+      Cómo dar nombre a elementos no textuales (imágenes, iconos, botones con solo símbolo) para que
+      los lectores de pantalla puedan anunciarlos.
+    </p>
+
+    <h3><code>alt</code> en <code>&lt;img&gt;</code> — siempre, sin excepción</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Imagen informativa</strong> — describe la información que aporta:
+        <code>alt="Gráfico: ventas crecen 40% en Q3"</code>.
+      </li>
+      <li>
+        <strong>Imagen decorativa</strong> (un patrón de fondo, un degradado) —
+        <code>alt=""</code> (vacío, NO omitido). Así el lector la ignora.
+      </li>
+      <li>
+        <strong>Imagen que ya está descrita en el texto adyacente</strong> —
+        <code>alt=""</code> para no repetir.
+      </li>
+      <li>
+        <strong>Imagen que es un enlace</strong> — el <code>alt</code> describe el destino, no la imagen:
+        <code>alt="Ir a Documentación"</code>.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Tres tipos de alt según la función de la imagen"
+      showCss={false}
+      html={`<!-- Decorativa: vacío -->
+<img src="/pattern.svg" alt="" />
+
+<!-- Informativa: descripción -->
+<img src="/chart.png" alt="Ventas: subida del 40% en Q3 vs Q2" />
+
+<!-- Link: describe el destino -->
+<a href="/docs">
+  <img src="/icon-docs.svg" alt="Ir a documentación" />
+</a>`}
+    />
+
+    <h3><code>aria-label</code> — nombre accesible sin texto visible</h3>
+    <p>
+      Cuando un elemento tiene solo un icono o un símbolo, el lector no tiene nada que leer.
+      <code>aria-label</code> añade un nombre invisible.
+    </p>
+
+    <CodeExample
+      title="Botón con solo icono → aria-label obligatorio"
+      showCss={false}
+      html={`<button type="button" aria-label="Cerrar diálogo">
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+    <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" />
+  </svg>
+</button>`}
+    />
+
+    <h3><code>aria-labelledby</code> y <code>aria-describedby</code></h3>
+    <ul class="bullet-list">
+      <li>
+        <code>aria-labelledby="ID"</code> — el nombre accesible viene del texto de otro elemento. Útil
+        cuando ese texto ya está en pantalla.
+      </li>
+      <li>
+        <code>aria-describedby="ID"</code> — descripción adicional (no el nombre principal). El lector
+        lo anuncia después del nombre. Perfecto para hints de formulario.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="aria-labelledby: dar nombre a una <section> a partir de su h2"
+      showCss={false}
+      html={`<section aria-labelledby="precios-titulo">
+  <h2 id="precios-titulo">Precios</h2>
+  <!-- ... -->
+</section>`}
+    />
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Sin <code>alt</code></strong> — el lector lee el nombre del archivo (<code
+          >"DSC-0042.jpg"</code
+        >). Catastrófico.
+      </li>
+      <li>
+        <strong><code>alt="imagen de..."</code></strong> — el lector ya anuncia "imagen". No repitas.
+      </li>
+      <li>
+        <strong><code>aria-label</code> en elementos con texto visible</strong> — el lector ignora el
+        texto y solo lee el label. Confunde. Solo úsalo cuando NO haya texto.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* FOCO Y TECLADO                                              */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="foco-teclado" class="subsection">
+    <h2>Foco y teclado</h2>
+    <p>
+      Mucha gente navega solo con teclado: usuarios con movilidad reducida, gente que prefiere no
+      mover el ratón, lectores de pantalla. La regla: <strong
+        >todo lo que es clickable debe ser enfocable y activable con <kbd>Tab</kbd>, <kbd>Enter</kbd
+        >/<kbd>Espacio</kbd></strong
+      >.
+    </p>
+
+    <h3>Orden lógico</h3>
+    <p>
+      El orden de foco sigue el orden del DOM. Si reordenas con CSS (<code>order</code> en flex,
+      <code>grid-row</code> en grid), el foco no se reordena. Mantén el HTML en el orden lógico que esperas.
+    </p>
+
+    <h3><code>:focus-visible</code> — outline solo con teclado</h3>
+    <p>
+      Antes <code>:focus</code> pintaba un outline en cada click (feo). Hoy
+      <code>:focus-visible</code> solo se aplica cuando el foco viene del teclado o de un trigger programático,
+      no cuando es un click.
+    </p>
+
+    <InteractionHint
+      >Haz click en el botón, no pasa nada. Tabula con el teclado: aparece el outline.</InteractionHint
+    >
+
+    <CodeExample
+      title="Outline solo cuando el foco viene del teclado"
+      html={`<button class="btn">Pulsa con Tab + Enter</button>`}
+      css={`.btn {
+  background: #1c1f23;
+  color: #e8e8e3;
+  border: 1px solid #2a2d31;
+  padding: 10px 20px;
+  font-family: monospace;
+  cursor: pointer;
+}
+.btn:focus { outline: none; }       /* desactivo el default fundoso */
+.btn:focus-visible {                /* y aplico el mío solo en teclado */
+  outline: 2px solid #6dff8a;
+  outline-offset: 2px;
+}`}
+    />
+
+    <h3>Skip link: "Saltar al contenido"</h3>
+    <p>
+      Lo primero del <code>&lt;body&gt;</code>: un link oculto que aparece al recibir foco y permite
+      saltar el header. Ayuda enormemente a quien navega con teclado.
+    </p>
+
+    <CodeExample
+      title="Skip link clásico: oculto hasta que recibe foco"
+      html={`<a href="#main" class="skip-link">Saltar al contenido</a>
+<header>...</header>
+<main id="main">...</main>`}
+      css={`.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  background: #6dff8a;
+  color: #0d0f0d;
+  padding: 8px 12px;
+  font-family: monospace;
+  text-decoration: none;
+  transition: top 150ms ease;
+  z-index: 100;
+}
+.skip-link:focus {
+  top: 8px;
+}`}
+    />
+
+    <h3><code>tabindex</code> con cuidado</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>tabindex="0"</code> — hace enfocable un elemento que no lo es por defecto (un
+        <code>&lt;div&gt;</code> que actúa como botón… aunque mejor usa <code>&lt;button&gt;</code
+        >).
+      </li>
+      <li>
+        <code>tabindex="-1"</code> — quita del orden de Tab, pero permite enfocar con JS (<code
+          >element.focus()</code
+        >). Útil para mover foco a un mensaje de error.
+      </li>
+      <li>
+        <strong>NUNCA</strong>
+        <code>tabindex="2"</code>, <code>tabindex="3"</code>… — fuerza un orden distinto al DOM,
+        rompe la previsibilidad. Reordena el HTML.
+      </li>
+    </ul>
+
+    <h3><code>inert</code> — apagar subárboles enteros</h3>
+    <p>
+      Atributo moderno que desactiva foco y clicks en todo el subárbol. Perfecto para apagar el
+      fondo cuando hay un modal abierto, o pestañas no activas.
+    </p>
+
+    <CodeExample
+      title="Tab panel inactivo no debería ser tabulable"
+      showCss={false}
+      html={`<section role="tabpanel" aria-labelledby="tab-1">Panel 1 (activo)</section>
+<section role="tabpanel" aria-labelledby="tab-2" inert hidden>Panel 2 (oculto)</section>`}
+    />
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong><code>outline: none</code> sin sustituto</strong> — quitas la pista visual del foco. Quien
+        navega con teclado se pierde. <em>Mínimo</em> 2px de outline visible en
+        <code>:focus-visible</code>.
+      </li>
+      <li>
+        <strong>Foco perdido tras cerrar modal</strong> — al cerrar, devuelve el foco al elemento que
+        lo abrió: <code>previousFocus.focus()</code>.
+      </li>
+      <li>
+        <strong>Carrusel sin parar al hacer Tab</strong> — el foco entra en el slide actual pero las flechas
+        no funcionan o el siguiente Tab se va a otro sitio. Usa
+        <code>aria-roledescription="carousel"</code> y permite parar.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* CONTRASTE Y COLOR                                           */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="contraste" class="subsection">
+    <h2>Contraste y color</h2>
+    <p>
+      Suficiente contraste entre texto y fondo para que se lea con baja visión, al sol, o en
+      pantallas malas.
+    </p>
+
+    <h3>Ratios mínimos (WCAG)</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>AA (objetivo)</strong> — 4.5:1 para texto normal, 3:1 para texto grande (18pt / 14pt bold).
+      </li>
+      <li><strong>AAA (estricto)</strong> — 7:1 para texto normal, 4.5:1 para texto grande.</li>
+      <li>
+        <strong>Elementos UI</strong> (bordes de inputs, iconos significativos) — 3:1 contra el fondo.
+      </li>
+    </ul>
+
+    <p>
+      Para chequearlo: DevTools de Chrome → selector de color → muestra el ratio y pinta si pasa
+      AA/AAA. También <code>contrast-ratio.com</code>, o el plugin Stark de Figma.
+    </p>
+
+    <h3>No transmitir solo con color</h3>
+    <p>
+      Si un input erróneo solo se pinta de rojo, una persona daltónica no lo ve. Acompaña SIEMPRE
+      con un icono, un texto o un cambio de forma.
+    </p>
+
+    <CodeExample
+      title="Mal vs bien: estado de error"
+      html={`<div class="form">
+  <div class="field error">
+    <span aria-hidden="true">✕</span>
+    <input value="email-malo" />
+    <p class="msg">Email no válido</p>
+  </div>
+</div>`}
+      css={`.form { font-family: monospace; }
+.field {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 12px;
+  background: #1c1f23;
+  border-inline-start: 4px solid #ff6b6b;
+  color: #e8e8e3;
+}
+.field span { color: #ff6b6b; font-weight: bold; font-size: 18px; }
+.field input {
+  background: #0d0f0d;
+  color: #e8e8e3;
+  border: 1px solid #ff6b6b;
+  padding: 6px 10px;
+  font-family: monospace;
+}
+.field .msg {
+  grid-column: 2;
+  color: #ff6b6b;
+  font-size: 12px;
+  margin: 0;
+}`}
+    />
+
+    <h3>Color scheme y modo claro/oscuro</h3>
+    <p>
+      <code>&lt;meta name="color-scheme" content="dark light"&gt;</code> indica al navegador que el sitio
+      soporta los dos. Esto ajusta scrollbars, form controls nativos y placeholders.
+    </p>
+
+    <h3><code>forced-colors</code> (Windows High Contrast)</h3>
+    <p>
+      Windows tiene modos de alto contraste forzados donde el SO impone su propia paleta. Respétalo:
+      no fuerces colores ahí, usa <code>currentColor</code> y <code>SystemColors</code>.
+    </p>
+
+    <CodeExample
+      title="Adaptar bordes en modo forzado"
+      showHtml={false}
+      html={`<button>Botón</button>`}
+      css={`@media (forced-colors: active) {
+  .btn {
+    border: 1px solid CanvasText;
+    forced-color-adjust: none;
+  }
+}`}
+    />
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* MOVIMIENTO                                                  */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="movimiento" class="subsection">
+    <h2>Movimiento</h2>
+    <p>
+      Animaciones grandes, parallax y vídeos en autoplay pueden causar mareos, migrañas y crisis
+      epilépticas a usuarios vulnerables. Respeta sus preferencias del sistema.
+    </p>
+
+    <h3><code>prefers-reduced-motion</code></h3>
+    <p>
+      El sistema operativo permite a cada usuario activar "Reducir movimiento". Detéctalo con esta
+      media query y suaviza o desactiva animaciones.
+    </p>
+
+    <CodeExample
+      title="Desactivar animaciones para quien lo pida"
+      showHtml={false}
+      html={`<p>Aplicado globalmente.</p>`}
+      css={`@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}`}
+    />
+
+    <h3>Vídeos en autoplay — sí, pero con condiciones</h3>
+    <ul class="bullet-list">
+      <li><strong>Siempre con <code>muted</code></strong> (el navegador lo bloquea si no).</li>
+      <li>Que no dure más de 5 segundos o que tenga un control de pausa visible y accesible.</li>
+      <li>Sin flashes ni cambios bruscos de brillo (riesgo de epilepsia fotosensible).</li>
+      <li>Bajo <code>prefers-reduced-motion: reduce</code>, ofrece la opción de pausar.</li>
+    </ul>
+
+    <h3>Parallax y scroll animations</h3>
+    <p>
+      Si la landing tiene parallax o elementos que aparecen con scroll, hazlos opcionales bajo
+      <code>prefers-reduced-motion</code>. Y nunca animes el scroll automáticamente — confunde a
+      lectores de pantalla.
+    </p>
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Animaciones infinitas en el viewport</strong> (loader, dot pulsando) son ruidosas. Solo
+        <em>una</em> a la vez y nunca cerca de texto que se intenta leer.
+      </li>
+      <li>
+        <strong>Hover que cambia el layout</strong> (un card que crece y empuja a los demás) produce un
+        efecto desagradable y confunde la lectura. Anima <code>transform</code> en su lugar.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* FORMULARIOS                                                 */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="formularios" class="subsection">
+    <h2>Formularios accesibles</h2>
+    <p>Los formularios son donde más se pierde la accesibilidad. Las cuatro reglas básicas:</p>
+
+    <ul class="bullet-list">
+      <li>
+        Cada input con <strong>su <code>&lt;label&gt;</code></strong> asociada (por
+        <code>for=id</code> o anidando).
+      </li>
+      <li>
+        Mensajes de error <strong>vinculados</strong> al input con
+        <code>aria-describedby</code>.
+      </li>
+      <li><strong>Marcar campos inválidos</strong> con <code>aria-invalid="true"</code>.</li>
+      <li>
+        Grupos de checkboxes/radios dentro de
+        <code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code>.
+      </li>
+    </ul>
+
+    <InteractionHint
+      >Tabula al input, escribe algo no válido y mira el error vinculado.</InteractionHint
+    >
+
+    <CodeExample
+      title="En landing: input con hint y error correctamente asociados"
+      height="220px"
+      html={`<form class="form">
+  <div class="field">
+    <label for="email">Email</label>
+    <input
+      id="email"
+      name="email"
+      type="email"
+      required
+      aria-describedby="email-hint email-error"
+      aria-invalid="false"
+    />
+    <p id="email-hint" class="hint">Lo usaremos para confirmar tu cuenta.</p>
+    <p id="email-error" class="error" hidden>Email no válido.</p>
+  </div>
+</form>`}
+      css={`.form {
+  background: #1c1f23;
+  padding: 16px;
+  font-family: monospace;
+  color: #e8e8e3;
+  max-width: 320px;
+}
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 12px; color: #8a8a85; }
+.field input {
+  background: #0d0f0d;
+  color: #e8e8e3;
+  border: 1px solid #2a2d31;
+  padding: 8px 12px;
+  font-family: monospace;
+}
+.field input:focus-visible {
+  outline: 2px solid #6dff8a;
+  outline-offset: 2px;
+  border-color: #6dff8a;
+}
+.field input[aria-invalid="true"] {
+  border-color: #ff6b6b;
+}
+.hint { color: #8a8a85; font-size: 11px; margin: 4px 0 0; }
+.error { color: #ff6b6b; font-size: 11px; margin: 4px 0 0; }`}
+    />
+
+    <h3>Grupos: <code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code></h3>
+
+    <CodeExample
+      title="Radios agrupados: la pregunta es el legend"
+      showCss={false}
+      html={`<fieldset>
+  <legend>¿Cómo nos conociste?</legend>
+  <label><input type="radio" name="ref" value="google" /> Google</label>
+  <label><input type="radio" name="ref" value="amigos" /> Amigos</label>
+  <label><input type="radio" name="ref" value="otros" /> Otros</label>
+</fieldset>`}
+    />
+
+    <h3>Mensajes de validación</h3>
+    <p>
+      Cuando aparece un error, mueve el foco al primer campo erróneo o muestra el error con
+      <code>role="alert"</code> para que el lector lo anuncie inmediatamente.
+    </p>
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Placeholder como label</strong> — desaparece al escribir, no anuncia bien con lectores.
+      </li>
+      <li>
+        <strong>Error solo en color rojo</strong> — añade icono + texto explícito.
+      </li>
+      <li>
+        <strong>Validar solo en JS</strong> — perdiendo <code>required</code>, <code
+          >type="email"</code
+        >
+        y la integración con <code>:invalid</code> en CSS.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* ESTADOS DINÁMICOS                                           */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="estados" class="subsection">
+    <h2>Estados dinámicos con ARIA</h2>
+    <p>
+      Componentes como acordeones, tabs, toggles… cambian de estado al interactuar. Hay atributos
+      ARIA que comunican ese estado a los lectores de pantalla.
+    </p>
+
+    <h3>Los más usados en landings</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>aria-expanded="true|false"</code> — para acordeones, dropdowns, menús. El lector lee "expandido"
+        / "colapsado".
+      </li>
+      <li>
+        <code>aria-current="page"</code> — el item del menú correspondiente a la página actual.
+      </li>
+      <li>
+        <code>aria-pressed="true|false"</code> — toggles (botón que se queda "encendido").
+      </li>
+      <li>
+        <code>aria-selected="true|false"</code> — tabs activas, opciones seleccionadas en listas.
+      </li>
+      <li>
+        <code>aria-controls="ID"</code> — vincula un botón al panel que abre/cierra.
+      </li>
+      <li>
+        <code>aria-hidden="true"</code> — oculta del lector. Para iconos decorativos.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Acordeón nativo: <details>/<summary> ya gestiona aria-expanded solo"
+      showCss={false}
+      html={`<details>
+  <summary>¿Cuánto cuesta?</summary>
+  <p>Gratis para uso personal.</p>
+</details>
+
+<!-- Si construyes un accordion custom (sin <details>), tú gestionas el atributo: -->
+<button aria-expanded="false" aria-controls="faq-1">
+  ¿Cuánto cuesta?
+</button>
+<div id="faq-1" hidden>
+  <p>Gratis para uso personal.</p>
+</div>`}
+    />
+
+    <CodeExample
+      title="Nav con aria-current en el link activo"
+      showCss={false}
+      html={`<nav aria-label="Principal">
+  <a href="/">Inicio</a>
+  <a href="/precios" aria-current="page">Precios</a>
+  <a href="/contacto">Contacto</a>
+</nav>`}
+    />
+
+    <h3>Patrón ARIA = comportamiento completo</h3>
+    <p>
+      ARIA <strong>no añade comportamiento</strong>, solo lo comunica. Si pones
+      <code>aria-expanded</code> tienes que <strong>tú</strong> cambiarlo con JS al abrir/cerrar. ARIA
+      mal mantenido (estado que miente) es peor que sin ARIA.
+    </p>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* CONTENIDO OCULTO                                            */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="oculto" class="subsection">
+    <h2>Ocultar contenido (bien)</h2>
+    <p>
+      Hay cinco formas de "ocultar" algo en HTML/CSS y cada una funciona distinto para
+      accesibilidad. Saber elegir la correcta es clave.
+    </p>
+
+    <h3>Las 5 maneras y qué hace cada una</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong><code>display: none</code></strong> — quita del flujo Y del árbol de accesibilidad. El
+        lector NO lo ve. Para contenido que <em>aún no debe existir</em>.
+      </li>
+      <li>
+        <strong><code>visibility: hidden</code></strong> — oculta pero ocupa espacio. También ocultado
+        para lectores.
+      </li>
+      <li>
+        <strong><code>hidden</code></strong> (atributo) — equivale a <code>display: none</code>.
+        Semánticamente mejor que la clase CSS.
+      </li>
+      <li>
+        <strong><code>aria-hidden="true"</code></strong> — oculto SOLO para lectores. Visible visualmente.
+        Para iconos decorativos junto a texto.
+      </li>
+      <li>
+        <strong>Clase <code>.sr-only</code></strong> — visualmente oculto pero accesible al lector. Para
+        texto que solo deben oír los usuarios de lector (ej. label oculto, contexto extra).
+      </li>
+    </ul>
+
+    <CodeExample
+      title="La clase .sr-only de referencia"
+      showHtml={false}
+      html={`<span class="sr-only">Buscar</span>`}
+      css={`.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}`}
+    />
+
+    <CodeExample
+      title="Uso real: icono con label invisible para el lector"
+      showCss={false}
+      html={`<button type="button">
+  <svg aria-hidden="true" width="20" height="20"><!-- lupa --></svg>
+  <span class="sr-only">Buscar</span>
+</button>`}
+    />
+
+    <h3>Combinaciones útiles</h3>
+    <ul class="bullet-list">
+      <li>
+        Icono decorativo: <code>aria-hidden="true"</code> en el SVG.
+      </li>
+      <li>
+        Label de un input que no quieres ver: la label visible normalmente; si no se puede, usa
+        <code>.sr-only</code>. <strong>Nunca</strong>
+        <code>aria-label</code> si hay otra alternativa.
+      </li>
+      <li>
+        Tab panel inactivo: <code>hidden</code> + <code>inert</code>.
+      </li>
+    </ul>
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong><code>opacity: 0</code> o <code>visibility: hidden</code> para "ocultar"</strong> — el
+        elemento sigue ocupando espacio y a veces sigue clickable. Confuso.
+      </li>
+      <li>
+        <strong><code>aria-hidden</code> en elementos enfocables</strong> — quitas la voz pero sigue siendo
+        tabulable, lo que es lo peor de los dos mundos. Usa también <code>inert</code>.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* LIVE REGIONS                                                */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="live" class="subsection">
+    <h2>Live regions</h2>
+    <p>
+      Avisos dinámicos que aparecen sin que el usuario navegue (toasts, mensajes de "guardado",
+      errores tras enviar un form). Los lectores los ignoran a menos que les digas que son regiones
+      "vivas".
+    </p>
+
+    <h3>Atributos clave</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>aria-live="polite"</code> — el lector lo anuncia cuando termine lo que esté leyendo. Para
+        confirmaciones ("Guardado", "Suscrito").
+      </li>
+      <li>
+        <code>aria-live="assertive"</code> — interrumpe lo que esté leyendo. Solo para errores críticos.
+      </li>
+      <li>
+        <code>role="status"</code> — atajo para <code>aria-live="polite"</code> +
+        <code>aria-atomic="true"</code>. Para mensajes informativos.
+      </li>
+      <li>
+        <code>role="alert"</code> — atajo para <code>aria-live="assertive"</code>. Errores urgentes.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Toast de éxito (polite) y banner de error (assertive)"
+      showCss={false}
+      html={`<!-- Confirmación tras suscribirse -->
+<div role="status">
+  ¡Te has suscrito! Revisa tu email.
+</div>
+
+<!-- Error crítico -->
+<div role="alert">
+  Hubo un problema con el pago. Inténtalo de nuevo.
+</div>`}
+    />
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Live region creada después</strong> — si insertas el elemento con
+        <code>aria-live</code> al mismo tiempo que su contenido, el lector no lo anuncia. Mejor: el elemento
+        <em>vacío</em> ya está en el DOM, y solo cambias su contenido cuando hace falta.
+      </li>
+      <li>
+        <strong>Usar <code>assertive</code> para todo</strong> — interrumpe constantemente. Solo para
+        errores críticos reales.
+      </li>
+      <li>
+        <strong>Toasts que desaparecen muy rápido</strong> — usa al menos 5 segundos visibles para que
+        dé tiempo a leerlos y a que el lector los anuncie.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* LECTORES DE PANTALLA                                        */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="lectores" class="subsection">
+    <h2>Lectores de pantalla</h2>
+    <p>
+      Software que lee la pantalla en voz alta. Los usuarios los navegan con atajos de teclado, no
+      "leyendo de arriba abajo". Saber cómo se usan ayuda a entender por qué importa la semántica.
+    </p>
+
+    <h3>Los principales</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>VoiceOver</strong> — macOS / iOS. Atajo: <kbd>Cmd</kbd>+<kbd>F5</kbd>.
+      </li>
+      <li>
+        <strong>NVDA</strong> — Windows, gratis. El más usado en el mundo profesional para tests.
+      </li>
+      <li>
+        <strong>JAWS</strong> — Windows, comercial. Mucho uso en empresa.
+      </li>
+      <li>
+        <strong>TalkBack</strong> — Android.
+      </li>
+    </ul>
+
+    <h3>Cómo navega un usuario</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Landmarks</strong> — salta entre <code>&lt;header&gt;</code>, <code
+          >&lt;nav&gt;</code
+        >,
+        <code>&lt;main&gt;</code>, <code>&lt;footer&gt;</code>… con una tecla (depende del lector).
+      </li>
+      <li>
+        <strong>Headings</strong> — lista de todos los <code>h1</code>–<code>h6</code> y va al que quiera.
+      </li>
+      <li>
+        <strong>Links / botones / formularios</strong> — listas separadas, salta entre ellos.
+      </li>
+      <li>
+        <strong>Forms mode</strong> — al entrar en un input, las teclas dejan de ser shortcuts del lector
+        y pasan al input.
+      </li>
+    </ul>
+
+    <p>
+      Por eso un sitio sin landmarks ni headings es como un libro sin índice: el usuario tiene que
+      leer todo línea por línea para encontrar lo que busca.
+    </p>
+
+    <h3>Prueba mínima</h3>
+    <p>
+      Activa VoiceOver (<kbd>Cmd</kbd>+<kbd>F5</kbd> en macOS) y navega tu landing solo con teclado durante
+      1 minuto. Si te frustras, hay trabajo que hacer.
+    </p>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* MODALES Y OVERLAYS                                          */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="modales" class="subsection">
+    <h2>Modales y overlays</h2>
+    <p>
+      Los modales mal implementados son el mayor agujero de accesibilidad. Buena noticia: el
+      <code>&lt;dialog&gt;</code> nativo resuelve casi todo.
+    </p>
+
+    <h3>Lo que necesita un modal accesible</h3>
+    <ul class="bullet-list">
+      <li><strong>Foco al abrir</strong> — el primer elemento del modal recibe foco.</li>
+      <li>
+        <strong>Foco-trap</strong> — Tab no escapa del modal mientras está abierto.
+      </li>
+      <li><strong><kbd>Esc</kbd> cierra</strong> — la convención universal.</li>
+      <li>
+        <strong>Foco devuelto al cerrar</strong> — vuelve al elemento que lo abrió.
+      </li>
+      <li>
+        <strong>Fondo inerte</strong> — el contenido detrás no es tabulable ni clickable mientras el modal
+        está abierto.
+      </li>
+      <li><strong>Backdrop oscuro</strong> — pista visual de que el resto está deshabilitado.</li>
+    </ul>
+
+    <p>
+      Todo eso lo da <code>&lt;dialog&gt;</code> con <code>showModal()</code> automáticamente.
+    </p>
+
+    <CodeExample
+      title="Modal accesible nativo, sin librerías"
+      showCss={false}
+      html={`<button onclick="modal.showModal()">Abrir modal</button>
+
+<dialog id="modal" aria-labelledby="modal-titulo">
+  <h2 id="modal-titulo">¿Confirmar acción?</h2>
+  <p>Esta acción no se puede deshacer.</p>
+
+  <form method="dialog">
+    <button value="cancel">Cancelar</button>
+    <button value="confirm">Confirmar</button>
+  </form>
+</dialog>
+
+<style>
+  dialog::backdrop {
+    background: rgba(13, 15, 13, 0.7);
+    backdrop-filter: blur(4px);
+  }
+</style>`}
+    />
+
+    <h3>Si NO usas <code>&lt;dialog&gt;</code> (modal custom)</h3>
+    <ul class="bullet-list">
+      <li>
+        Pon <code>role="dialog"</code> y <code>aria-modal="true"</code> en el contenedor.
+      </li>
+      <li>
+        Vincula el título con <code>aria-labelledby</code>.
+      </li>
+      <li>Implementa foco-trap manualmente (o usa <code>focus-trap</code> npm).</li>
+      <li><code>inert</code> en el resto del DOM.</li>
+      <li>Cierra con <kbd>Esc</kbd> y devuelve foco con JS.</li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* IDIOMA Y ZOOM                                               */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="idioma-zoom" class="subsection">
+    <h2>Idioma y zoom</h2>
+
+    <h3><code>lang</code> en el <code>&lt;html&gt;</code></h3>
+    <p>
+      Sin esto, los lectores de pantalla pronuncian todo con fonética inglesa por defecto. Un
+      "miércoles" puede sonar a "míercoles". Imprescindible.
+    </p>
+
+    <CodeExample
+      title="Idioma del documento + cambio puntual"
+      showCss={false}
+      html={`<html lang="es">
+<body>
+  <p>Visitamos el museo y vimos un cuadro famoso titulado
+    <span lang="fr">La Liberté guidant le peuple</span>.
+  </p>
+</body>
+</html>`}
+    />
+
+    <h3>Zoom hasta 200% sin scroll horizontal</h3>
+    <p>
+      WCAG AA exige que el sitio funcione al hacer zoom hasta 200% sin perder contenido ni requerir
+      scroll horizontal. Esto se consigue solo con:
+    </p>
+    <ul class="bullet-list">
+      <li>Usar <code>rem</code> en lugar de <code>px</code> para tamaños de texto.</li>
+      <li>Layouts que se adapten (Flexbox, Grid, no anchos fijos en píxeles).</li>
+      <li>Evitar <code>overflow: hidden</code> en contenedores con texto.</li>
+      <li>
+        <code>&lt;meta name="viewport" content="..., maximum-scale=1"&gt;</code>
+        <strong>NO</strong>: deshabilita el zoom y eso es antiaccesibilidad. No lo pongas.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* HERRAMIENTAS                                                */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="herramientas" class="subsection">
+    <h2>Herramientas para auditar</h2>
+    <p>
+      Ninguna herramienta automatizada detecta el 100% de los problemas — máximo el 30-40%. Pero son
+      un excelente filtro inicial.
+    </p>
+
+    <h3>Automáticas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>axe DevTools</strong> (extensión de Chrome/Firefox) — la mejor de todas. Indica el problema
+        y cómo arreglarlo.
+      </li>
+      <li>
+        <strong>Lighthouse</strong> (en Chrome DevTools) — score de accesibilidad junto a perf y SEO.
+      </li>
+      <li>
+        <strong>Wave</strong> (extensión) — visual, marca errores directamente sobre la página.
+      </li>
+      <li>
+        <strong>Pa11y</strong> — CLI, perfecta para CI/CD.
+      </li>
+    </ul>
+
+    <h3>Manuales — lo que las herramientas no ven</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Navega solo con teclado</strong> — Tab por toda la landing. ¿Se ve siempre dónde está
+        el foco? ¿Puedes activar todo? ¿Puedes escapar de modales con Esc?
+      </li>
+      <li>
+        <strong>Lector de pantalla</strong> — al menos 5 minutos navegando con VoiceOver o NVDA.
+      </li>
+      <li>
+        <strong>Zoom 200%</strong> — Cmd/Ctrl + varias veces. ¿Sigue funcionando todo?
+      </li>
+      <li>
+        <strong>Sin estilos</strong> — desactiva CSS en DevTools. Si el contenido sigue teniendo sentido
+        y jerarquía, vas bien.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* CHECKLIST FINAL                                             */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="checklist" class="subsection">
+    <h2>Checklist mínimo antes de publicar</h2>
+    <p>Lo que debe estar en orden en cualquier landing antes de salir, ordenado por impacto.</p>
+
+    <ul class="bullet-list">
+      <li>
+        ☐ <code>&lt;html lang="es"&gt;</code> está presente.
+      </li>
+      <li>
+        ☐ <code>&lt;meta name="viewport"&gt;</code> está y permite zoom.
+      </li>
+      <li>
+        ☐ Una sola <code>&lt;h1&gt;</code> por página y la jerarquía no se salta niveles.
+      </li>
+      <li>
+        ☐ Todas las imágenes tienen <code>alt</code> (vacío si son decorativas).
+      </li>
+      <li>
+        ☐ Todos los inputs tienen <code>&lt;label&gt;</code> asociada.
+      </li>
+      <li>
+        ☐ Todos los botones son <code>&lt;button&gt;</code> y todos los links tienen <code
+          >href</code
+        >.
+      </li>
+      <li>
+        ☐ Botones con solo icono tienen <code>aria-label</code>.
+      </li>
+      <li>
+        ☐ <code>:focus-visible</code> con outline claro (≥ 2px, contraste 3:1).
+      </li>
+      <li>☐ Contraste texto/fondo: 4.5:1 mínimo (3:1 para texto grande).</li>
+      <li>
+        ☐ El sitio funciona navegando solo con <kbd>Tab</kbd> y <kbd>Enter</kbd>.
+      </li>
+      <li>
+        ☐ Estados de error vinculados con <code>aria-describedby</code> y marcados con
+        <code>aria-invalid</code>.
+      </li>
+      <li>
+        ☐ Modales con <code>&lt;dialog&gt;</code> o con foco-trap, <kbd>Esc</kbd> cierra,
+        <code>inert</code> en fondo.
+      </li>
+      <li>
+        ☐ <code>@media (prefers-reduced-motion: reduce)</code> respeta la preferencia del SO.
+      </li>
+      <li>☐ Skip link "Saltar al contenido" como primer elemento del body.</li>
+      <li>☐ Pasa Lighthouse Accessibility con ≥ 95.</li>
+      <li>☐ Pasa una auditoría manual con teclado y lector de pantalla.</li>
+    </ul>
+  </section>
+</SectionLayout>

@@ -22,9 +22,30 @@ interface Props {
   height?: string
   showHtml?: boolean
   showCss?: boolean
+  /*
+   * HTML alternativo SOLO para el preview del iframe.
+   * Útil cuando el código de ejemplo usa rutas que no resuelven dentro
+   * del iframe (img src="/hero.webp") — se enseña ese código tal cual y
+   * el iframe carga la versión con placeholders.
+   */
+  previewHtml?: string
+  /* CSS alternativo SOLO para el preview, mismo motivo. */
+  previewCss?: string
 }
 
-const { html, css = '', title, height = '200px', showHtml = true, showCss = true } = Astro.props
+const {
+  html,
+  css = '',
+  title,
+  height = '200px',
+  showHtml = true,
+  showCss = true,
+  previewHtml,
+  previewCss,
+} = Astro.props
+
+const htmlForPreview = previewHtml ?? html
+const cssForPreview = previewCss ?? css
 
 const escapeHtml = (raw: string) =>
   raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -46,9 +67,9 @@ const srcdoc = `<!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <style>${iframeBaseStyles}${css}</style>
+    <style>${iframeBaseStyles}${cssForPreview}</style>
   </head>
-  <body>${html}</body>
+  <body>${htmlForPreview}</body>
 </html>`
 ---
 

@@ -3,6 +3,20 @@ import SectionLayout from '../../layouts/SectionLayout.astro'
 import CodeExample from '../../components/CodeExample.astro'
 import InteractionHint from '../../components/InteractionHint.astro'
 
+/*
+ * Genera un placeholder SVG embebido como data URI.
+ * Los ejemplos usan rutas falsas (/hero.webp) que no resuelven dentro
+ * del iframe del preview. Estos placeholders sí se ven y mantienen el
+ * tamaño/proporción del ejemplo.
+ */
+const placeholder = (width: number, height: number, label: string, bg = '#1c1f23') => {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ${width} ${height}'>
+    <rect width='${width}' height='${height}' fill='${bg}'/>
+    <text x='50%' y='50%' fill='#6dff8a' font-family='monospace' font-size='${Math.min(width, height) / 8}' text-anchor='middle' dy='.3em'>${label}</text>
+  </svg>`
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
+}
+
 const subsections = [
   { id: 'anatomia', label: 'Anatomía' },
   { id: 'semantica', label: 'Semántica' },
@@ -542,6 +556,10 @@ const subsections = [
   loading="lazy"
   decoding="async"
 />`}
+      previewHtml={`<img src="${placeholder(1280, 720, 'hero.webp')}" alt="" width="320" height="180" />
+<p style="font-family:monospace;font-size:12px;color:#8a8a85;margin:8px 0 16px">fetchpriority="high"</p>
+<img src="${placeholder(600, 400, 'feature.webp')}" alt="" width="200" height="133" />
+<p style="font-family:monospace;font-size:12px;color:#8a8a85;margin:8px 0 0">loading="lazy" decoding="async"</p>`}
     />
 
     <h3><code>srcset</code> + <code>sizes</code> — la misma imagen, varios tamaños</h3>
@@ -562,6 +580,14 @@ const subsections = [
   width="800"
   height="450"
 />`}
+      previewHtml={`<img
+  src="${placeholder(800, 450, '800w')}"
+  srcset="${placeholder(400, 225, '400w')} 400w, ${placeholder(800, 450, '800w')} 800w, ${placeholder(1600, 900, '1600w')} 1600w"
+  sizes="(min-width: 1024px) 800px, 100vw"
+  alt=""
+  width="320"
+  height="180"
+/>`}
     />
 
     <h3><code>&lt;picture&gt;</code> — fuentes alternativas (art direction, WebP/AVIF)</h3>
@@ -573,6 +599,11 @@ const subsections = [
   <source type="image/avif" srcset="/hero.avif" />
   <source type="image/webp" srcset="/hero.webp" />
   <img src="/hero.jpg" alt="..." width="1280" height="720" />
+</picture>`}
+      previewHtml={`<picture>
+  <source type="image/avif" srcset="${placeholder(1280, 720, 'hero.avif')}" />
+  <source type="image/webp" srcset="${placeholder(1280, 720, 'hero.webp')}" />
+  <img src="${placeholder(1280, 720, 'hero.jpg')}" alt="" width="320" height="180" />
 </picture>`}
     />
 
