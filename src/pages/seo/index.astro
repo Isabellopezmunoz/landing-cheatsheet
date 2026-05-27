@@ -1,0 +1,1203 @@
+---
+import SectionLayout from '../../layouts/SectionLayout.astro'
+import CodeExample from '../../components/CodeExample.astro'
+import InteractionHint from '../../components/InteractionHint.astro'
+
+const subsections = [
+  { id: 'por-que', label: 'Por qué importa' },
+  { id: 'meta', label: 'Meta tags' },
+  { id: 'open-graph', label: 'Open Graph' },
+  { id: 'jsonld', label: 'Structured data' },
+  { id: 'urls', label: 'URLs y redirects' },
+  { id: 'sitemap', label: 'Sitemap & robots' },
+  { id: 'cwv', label: 'Core Web Vitals' },
+  { id: 'i18n', label: 'Internacional' },
+  { id: 'contenido', label: 'Contenido y keywords' },
+  { id: 'marketing-intro', label: '— Marketing —' },
+  { id: 'convertir', label: 'Qué convierte' },
+  { id: 'anatomia', label: 'Anatomía de landing' },
+  { id: 'ctas', label: 'CTAs' },
+  { id: 'social-proof', label: 'Social proof' },
+  { id: 'forms', label: 'Forms que convierten' },
+  { id: 'medicion', label: 'Medición' },
+  { id: 'privacy', label: 'Privacy & consent' },
+]
+---
+
+<SectionLayout
+  title="SEO & Marketing · landing-cheatsheet"
+  description="SEO moderno y marketing básico para que una landing se encuentre, cargue rápido y convierta."
+  sectionLabel="SEO"
+  subsections={subsections}
+>
+  <header class="page-header">
+    <p class="page-tag">[ SECCIÓN / SEO & MARKETING ]</p>
+    <h1>SEO &amp; Marketing</h1>
+    <p class="page-lead">
+      Para que la landing <strong>se encuentre</strong> (SEO técnico, structured data, Core Web Vitals)
+      y <strong>convierta</strong> (anatomía de landing, CTAs, social proof, medición y privacidad). Lo
+      justo para una persona que construye landings sola, sin equipo de growth.
+    </p>
+  </header>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* POR QUÉ IMPORTA                                             */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="por-que" class="subsection">
+    <h2>Por qué importa</h2>
+    <p>
+      Una landing puede ser bonita y rápida, pero si Google no la entiende o el visitante no sabe
+      qué tiene que hacer, no sirve. SEO y marketing son dos caras del mismo objetivo: que llegue
+      gente <em>relevante</em> y que esa gente <em>haga la acción</em> que buscas.
+    </p>
+
+    <h3>Dos categorías de SEO</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>SEO técnico</strong> — lo que el navegador y Google ven sin leer el contenido: meta tags,
+        structured data, performance, accesibilidad, URLs limpias. Es 100% código.
+      </li>
+      <li>
+        <strong>SEO on-page</strong> — el contenido en sí: títulos, palabras clave, intent del usuario,
+        longitud. Lo controlas tú escribiendo.
+      </li>
+    </ul>
+
+    <h3>El contexto en 2026</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>AI Overviews</strong> (Google), <strong>Perplexity</strong>, <strong
+          >ChatGPT Search</strong
+        > resumen tu contenido sin enviarte clicks. Para aparecer en esos resúmenes importa mucho la <strong
+          >claridad estructural</strong
+        >: encabezados claros, FAQ marcado con structured data, respuestas directas en el cuerpo.
+      </li>
+      <li>
+        Los <strong>Core Web Vitals</strong> son factor de ranking real desde hace años. Una landing lenta
+        pierde posiciones.
+      </li>
+      <li>
+        La <strong>E-E-A-T</strong> (Experience, Expertise, Authoritativeness, Trustworthiness) pesa más:
+        Google quiere ver quién hay detrás del contenido.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* META TAGS                                                   */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="meta" class="subsection">
+    <h2>Meta tags imprescindibles</h2>
+    <p>
+      Lo mínimo que tiene que tener el <code>&lt;head&gt;</code> de una landing para que Google la entienda.
+      La sección <a href="/html#meta">HTML / Meta tags</a> cubre el detalle; aquí va el enfoque SEO.
+    </p>
+
+    <h3><code>title</code> y <code>meta description</code></h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Title</strong>: 50–60 caracteres. Patrón típico:
+        <code>Beneficio principal · Marca</code>. Pon la keyword importante al principio.
+      </li>
+      <li>
+        <strong>Description</strong>: 120–160 caracteres. <em>No</em> es factor de ranking, pero sí decide
+        si el usuario hace click en tu resultado.
+      </li>
+      <li>
+        Cada página, su título único. <strong>Jamás</strong> el mismo title repetido.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Title + description bien planteados"
+      showCss={false}
+      html={`<title>Crea landings rápido sin código · Marca</title>
+<meta
+  name="description"
+  content="Editor visual para hacer landings en 10 minutos. Sin código, con plantillas y deploy gratis."
+/>`}
+    />
+
+    <h3><code>canonical</code> — la URL "oficial"</h3>
+    <p>
+      Indica a Google cuál es la URL principal de esta página. Evita problemas de contenido
+      duplicado por <code>www</code> vs sin www, <code>https</code>, parámetros UTM, etc.
+    </p>
+
+    <CodeExample
+      title="Canonical apuntando a la URL limpia"
+      showCss={false}
+      html={`<link rel="canonical" href="https://miweb.com/precios" />`}
+    />
+
+    <h3><code>robots</code> y <code>googlebot</code></h3>
+    <ul class="bullet-list">
+      <li>
+        <code>&lt;meta name="robots" content="index, follow"&gt;</code> — default (no hace falta ponerlo).
+      </li>
+      <li>
+        <code>content="noindex"</code> — esta página no aparece en Google. Para gracias, políticas de
+        privacidad técnicas, o landings de campaña que no quieres indexar.
+      </li>
+      <li>
+        <code>content="nofollow"</code> — no sigue los links de la página. Casi nunca lo quieres.
+      </li>
+    </ul>
+
+    <h3>Trampas y errores típicos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Title genérico</strong> ("Home", "Inicio") — el mayor desperdicio de SEO. Pon beneficio
+        + marca.
+      </li>
+      <li>
+        <strong>Misma <code>description</code> en todas las páginas</strong> — Google la ignora y genera
+        una propia. Personaliza por página.
+      </li>
+      <li>
+        <strong>Olvidar <code>canonical</code></strong> en landings con parámetros UTM — duplica contenido
+        en el índice.
+      </li>
+      <li>
+        <strong><code>noindex</code> por error en producción</strong> — bug clásico al portar desde staging.
+        Comprueba siempre antes de lanzar.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* OPEN GRAPH                                                  */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="open-graph" class="subsection">
+    <h2>Open Graph y Twitter Cards</h2>
+    <p>
+      Controlan cómo se ve la landing cuando alguien comparte el link en WhatsApp, Slack, LinkedIn,
+      X, Discord… Una preview cuidada multiplica el CTR. Es <strong>el SEO del compartir</strong>.
+    </p>
+
+    <h3>Open Graph (estándar de Facebook, lo usa todo el mundo)</h3>
+
+    <CodeExample
+      title="Open Graph mínimo recomendado"
+      showCss={false}
+      html={`<meta property="og:type" content="website" />
+<meta property="og:url" content="https://miweb.com/" />
+<meta property="og:title" content="Crea landings rápido sin código" />
+<meta property="og:description" content="Editor visual para hacer landings en 10 minutos." />
+<meta property="og:image" content="https://miweb.com/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="es_ES" />
+<meta property="og:site_name" content="Marca" />`}
+    />
+
+    <h3>Twitter Cards</h3>
+    <p>
+      X/Twitter usa Open Graph como fallback, pero respeta <code>twitter:*</code> si lo especificas. Lo
+      único realmente útil:
+    </p>
+
+    <CodeExample
+      title="Twitter Card con summary_large_image"
+      showCss={false}
+      html={`<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@tucuenta" />
+<meta name="twitter:creator" content="@autorcuenta" />`}
+    />
+
+    <h3>La imagen <code>og:image</code></h3>
+    <ul class="bullet-list">
+      <li><strong>1200×630px</strong> — el ratio que todas las plataformas respetan.</li>
+      <li><strong>&lt;1MB</strong>. PNG o JPG. WebP no siempre se soporta.</li>
+      <li>
+        Que sea legible <strong>cuadrada</strong> en muchos sitios (LinkedIn móvil recorta). Pon lo importante
+        en el centro.
+      </li>
+      <li>Texto grande y contraste alto. Va a verse pequeño en un timeline.</li>
+      <li>URL absoluta, no relativa. Algunos crawlers no resuelven relativas.</li>
+    </ul>
+
+    <h3>Cómo probarlo</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>opengraph.xyz</strong> — preview en todas las plataformas a la vez.
+      </li>
+      <li>
+        <strong>Facebook Sharing Debugger</strong> — además permite refrescar la caché.
+      </li>
+      <li>
+        <strong>X Card Validator</strong> (developer.x.com).
+      </li>
+      <li>
+        <strong>LinkedIn Post Inspector</strong>.
+      </li>
+    </ul>
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Imagen relativa</strong> (<code>/og.png</code>) — algunos crawlers no la cargan.
+        Siempre absoluta.
+      </li>
+      <li>
+        <strong>Cambiar la imagen y no actualizar la caché</strong> — Facebook/LinkedIn cachean agresivamente.
+        Usa sus debuggers para forzar refresh.
+      </li>
+      <li>
+        <strong>Falta <code>og:image:width</code>/<code>height</code></strong> — algunas redes muestran
+        tarjeta pequeña hasta que la imagen carga; si pones dimensiones, dejan hueco correcto desde el
+        inicio.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* STRUCTURED DATA                                             */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="jsonld" class="subsection">
+    <h2>Structured data (JSON-LD)</h2>
+    <p>
+      Datos en formato schema.org que Google y los AI usan para entender exactamente qué hay en la
+      página. Permite <strong>rich snippets</strong>: estrellitas, FAQs desplegables, precio en el
+      resultado, breadcrumbs en lugar de URL fea.
+    </p>
+
+    <h3>Formato</h3>
+    <p>
+      Se inserta como un <code>&lt;script type="application/ld+json"&gt;</code> en el
+      <code>&lt;head&gt;</code>. <strong>JSON-LD</strong> es el formato recomendado por Google.
+    </p>
+
+    <h3>Schemas más útiles para una landing</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Organization</strong> — identifica a la marca. Pon logo y redes.
+      </li>
+      <li>
+        <strong>WebSite</strong> con <code>SearchAction</code> — habilita la sitelink searchbox.
+      </li>
+      <li>
+        <strong>Product</strong> — si vendes algo. Habilita precio + estrellas + stock en resultados.
+      </li>
+      <li>
+        <strong>FAQPage</strong> — para FAQs reales. Hace que aparezcan plegables en el resultado.
+      </li>
+      <li>
+        <strong>BreadcrumbList</strong> — sustituye la URL fea por la jerarquía en el resultado.
+      </li>
+      <li>
+        <strong>Article</strong> — para landings tipo post / caso de estudio.
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Organization + FAQPage (lo más típico de una landing)"
+      showCss={false}
+      html={`<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "Marca",
+      "url": "https://miweb.com",
+      "logo": "https://miweb.com/logo.png",
+      "sameAs": [
+        "https://twitter.com/marca",
+        "https://github.com/marca"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Cuánto cuesta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Gratis para uso personal. Plan Pro 9€/mes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Funciona offline?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, todo se ejecuta en tu navegador."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>`}
+    />
+
+    <h3>Generadores y validadores</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>schema.org</strong> — la referencia oficial de todos los tipos.
+      </li>
+      <li>
+        <strong>technicalseo.com/tools/schema-markup-generator</strong> — generador visual.
+      </li>
+      <li>
+        <strong>Rich Results Test</strong> (search.google.com/test/rich-results) — valida si Google va
+        a generar rich snippets con tu JSON-LD.
+      </li>
+      <li>
+        <strong>Schema Markup Validator</strong> (validator.schema.org) — valida sintaxis pura.
+      </li>
+    </ul>
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Marcar contenido que no existe</strong> (FAQ inventado) — Google penaliza. La info en
+        el JSON-LD tiene que coincidir con lo que se ve en la página.
+      </li>
+      <li>
+        <strong>JSON inválido</strong> rompe TODO el bloque — un coma de más y Google ignora todos los
+        schemas. Valida siempre.
+      </li>
+      <li>
+        <strong>Múltiples Organization en distintas páginas con info distinta</strong> — confunde a Google.
+        Define el Organization igual en todas, o solo en la home.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* URLs                                                        */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="urls" class="subsection">
+    <h2>URLs y redirects</h2>
+
+    <h3>Cómo es una buena URL</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Corta y descriptiva</strong> — <code>/precios</code> mejor que <code>/p?id=12</code
+        >.
+      </li>
+      <li>
+        <strong>Minúsculas, palabras con guiones</strong> — <code>/caso-estudio</code>, no
+        <code>/CasoEstudio</code> ni <code>/caso_estudio</code>.
+      </li>
+      <li>
+        <strong>Sin acentos ni caracteres especiales</strong> — <code>/que-es</code>, no
+        <code>/qué-es</code>. Los crawlers lo manejan, pero queda raro al compartir.
+      </li>
+      <li>
+        <strong>Estructura semántica</strong> — <code>/blog/articulo</code> &gt;
+        <code>/articulo</code> si tiene jerarquía real.
+      </li>
+      <li>
+        <strong>Trailing slash consistente</strong> — elige con o sin, pero hazlo igual en TODAS. Si no,
+        redirect 301 al canónico.
+      </li>
+    </ul>
+
+    <h3>Redirects 301 vs 302</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>301 (permanente)</strong> — Google transfiere el "jugo SEO" de la URL antigua a la nueva.
+        Para cambios de URL, dominios viejos, eliminar páginas con redirect a un equivalente.
+      </li>
+      <li>
+        <strong>302 (temporal)</strong> — Google mantiene la URL antigua en el índice. Para A/B testing,
+        mantenimiento, redirects que vas a deshacer.
+      </li>
+    </ul>
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Cambiar slugs sin redirect 301</strong> — pierdes todo el SEO acumulado. Si renombras
+        <code>/products</code> → <code>/productos</code>, redirect obligatorio.
+      </li>
+      <li>
+        <strong>Cadenas de redirects</strong> (<code>A → B → C → D</code>) — Google las sigue pero
+        las penaliza. Redirige siempre directamente al destino final.
+      </li>
+      <li>
+        <strong>Parámetros UTM sin canonical</strong> — cada UTM crea una URL distinta en el índice. Soluciónalo
+        con <code>&lt;link rel="canonical"&gt;</code> apuntando a la URL limpia.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* SITEMAP & ROBOTS                                            */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="sitemap" class="subsection">
+    <h2>Sitemap & robots.txt</h2>
+    <p>Dos archivos en la raíz del dominio que le dicen a Google qué indexar y qué no.</p>
+
+    <h3><code>robots.txt</code></h3>
+    <p>
+      Vive en <code>/robots.txt</code>. Indica qué crawlers pueden visitar qué rutas. <strong
+        >No sirve para impedir indexación</strong
+      > (usa <code>noindex</code> para eso) — solo bloquea el rastreo.
+    </p>
+
+    <CodeExample
+      title="robots.txt típico de una landing"
+      showCss={false}
+      html={`User-agent: *
+Allow: /
+
+# Bloquea áreas internas que no queremos rastrear
+Disallow: /admin/
+Disallow: /api/
+
+# Vincula al sitemap
+Sitemap: https://miweb.com/sitemap.xml`}
+    />
+
+    <h3><code>sitemap.xml</code></h3>
+    <p>
+      Listado XML con todas las URLs que quieres que Google indexe + cuándo cambian. Para una
+      landing pequeña, generarlo a mano. Para sitios grandes, automatizado.
+    </p>
+
+    <CodeExample
+      title="Sitemap de una landing con varias páginas"
+      showCss={false}
+      html={`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://miweb.com/</loc>
+    <lastmod>2026-01-15</lastmod>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://miweb.com/precios</loc>
+    <lastmod>2026-01-10</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://miweb.com/blog</loc>
+    <lastmod>2026-01-12</lastmod>
+    <priority>0.7</priority>
+  </url>
+</urlset>`}
+    />
+
+    <h3>Google Search Console</h3>
+    <p>
+      Imprescindible. Es donde Google te dice qué encuentra, qué indexa, errores, palabras por las
+      que apareces, CTR, posición media. Verifica el dominio, sube el sitemap y revisa el informe
+      semanalmente las primeras semanas tras lanzar.
+    </p>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* CORE WEB VITALS                                             */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="cwv" class="subsection">
+    <h2>Core Web Vitals</h2>
+    <p>
+      Las tres métricas que Google usa como factor de ranking. Una landing lenta pierde posiciones,
+      además de conversiones (cada 1s extra de carga = ~7% de conversión perdida).
+    </p>
+
+    <h3>Las tres métricas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>LCP (Largest Contentful Paint)</strong> — cuánto tarda en pintarse el elemento más grande
+        del viewport. <strong>Objetivo: &lt; 2.5s</strong>. Casi siempre es la imagen del hero.
+      </li>
+      <li>
+        <strong>CLS (Cumulative Layout Shift)</strong> — cuánto "salta" el layout mientras carga.
+        <strong>Objetivo: &lt; 0.1</strong>. Causas típicas: imágenes sin width/height, fuentes web
+        que llegan tarde, anuncios.
+      </li>
+      <li>
+        <strong>INP (Interaction to Next Paint)</strong> — cuánto tarda en responder a una interacción.
+        <strong>Objetivo: &lt; 200ms</strong>. Sustituye al FID desde 2024.
+      </li>
+    </ul>
+
+    <h3>Cómo arreglar LCP</h3>
+    <ul class="bullet-list">
+      <li>
+        Imagen del hero: <code>fetchpriority="high"</code> + <code>loading="eager"</code> (no lazy).
+      </li>
+      <li>Servir la imagen en WebP/AVIF, con <code>srcset</code> para el tamaño justo.</li>
+      <li>
+        <code>&lt;link rel="preload"&gt;</code> para fuentes críticas y la imagen del hero.
+      </li>
+      <li>CSS crítico inline en el <code>&lt;head&gt;</code>, el resto async.</li>
+      <li>Hosting cerca de tus usuarios (CDN).</li>
+    </ul>
+
+    <h3>Cómo arreglar CLS</h3>
+    <ul class="bullet-list">
+      <li>
+        Imágenes y vídeos SIEMPRE con <code>width</code> y <code>height</code>.
+      </li>
+      <li>
+        <code>aspect-ratio</code> en cualquier contenedor que cargue contenido dinámico.
+      </li>
+      <li>
+        Fuentes: <code>font-display: swap</code> + reservar espacio con <code>size-adjust</code>
+        / <code>ascent-override</code>.
+      </li>
+      <li>No insertes contenido encima de lo que el usuario está leyendo.</li>
+    </ul>
+
+    <h3>Cómo arreglar INP</h3>
+    <ul class="bullet-list">
+      <li>Menos JavaScript en el cliente. Server-side rendering siempre que puedas.</li>
+      <li>Dividir tareas largas (web workers, <code>requestIdleCallback</code>).</li>
+      <li>
+        Quitar dependencias pesadas innecesarias (¿de verdad necesitas jQuery para una landing en
+        2026?).
+      </li>
+    </ul>
+
+    <h3>Herramientas para medir</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>PageSpeed Insights</strong> (pagespeed.web.dev) — la oficial. Da datos de campo reales
+        y de lab.
+      </li>
+      <li>
+        <strong>Lighthouse</strong> (Chrome DevTools) — solo lab, pero rápida para iterar.
+      </li>
+      <li>
+        <strong>WebPageTest</strong> — la profesional, con waterfall completo.
+      </li>
+      <li>
+        <strong>Core Web Vitals report</strong> en Search Console — datos de tus usuarios reales.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* INTERNACIONAL                                               */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="i18n" class="subsection">
+    <h2>Internacionalización (<code>hreflang</code>)</h2>
+    <p>
+      Si la landing tiene versión en varios idiomas/países, <code>hreflang</code> le dice a Google qué
+      versión mostrar a cada usuario.
+    </p>
+
+    <CodeExample
+      title="Landing con versión ES, EN y default"
+      showCss={false}
+      html={`<link rel="alternate" hreflang="es" href="https://miweb.com/es/" />
+<link rel="alternate" hreflang="en" href="https://miweb.com/en/" />
+<link rel="alternate" hreflang="es-MX" href="https://miweb.com/mx/" />
+<link rel="alternate" hreflang="x-default" href="https://miweb.com/" />`}
+    />
+
+    <h3>Reglas clave</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Bidireccional</strong>: la versión ES debe linkar a la EN y viceversa. Si no, Google
+        ignora la relación.
+      </li>
+      <li>
+        <strong><code>x-default</code></strong> es la versión que se muestra si no coincide ninguna otra.
+        Suele ser la EN o un selector.
+      </li>
+      <li>
+        Códigos válidos: <code>es</code>, <code>es-MX</code>, <code>en-US</code>,
+        <code>en-GB</code>… Si te equivocas en uno, Google ignora todo el set.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* CONTENIDO Y KEYWORDS                                        */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="contenido" class="subsection">
+    <h2>Contenido y keywords</h2>
+
+    <h3>Intent del usuario antes que keyword</h3>
+    <p>
+      Google ya no busca coincidencia exacta de palabras: entiende el <strong>intent</strong> (qué quiere
+      conseguir el usuario). Una landing optimizada para "<em>editor de landings</em>" debe cubrir
+      las preguntas que se hace alguien que busca eso: precio, alternativas, comparativas, cómo
+      empezar.
+    </p>
+
+    <h3>Encabezados con keywords (sin keyword stuffing)</h3>
+    <ul class="bullet-list">
+      <li>
+        El <code>&lt;h1&gt;</code> incluye la keyword principal, naturalmente.
+      </li>
+      <li>
+        <code>&lt;h2&gt;</code>/<code>&lt;h3&gt;</code> cubren keywords secundarias (sinónimos, long-tail).
+      </li>
+      <li>
+        Nunca fuerces la keyword: "Crea landings rápido con nuestro <em>editor de landings</em> que es
+        el mejor <em>editor de landings</em>" = penalización. Escribe natural.
+      </li>
+    </ul>
+
+    <h3>Longitud y profundidad</h3>
+    <ul class="bullet-list">
+      <li>
+        Las landings que rankean para keywords competidas <strong
+          >cubren el tema en profundidad</strong
+        >: responden todas las preguntas relacionadas (intent informacional + transaccional).
+      </li>
+      <li>
+        Para AI Overviews: incluye una sección "Qué es X" al principio con respuesta directa en 1-2
+        frases. Los modelos cogen esa primera frase.
+      </li>
+      <li>Cuidado con sacrificar la legibilidad por el SEO. Una landing infumable convierte 0.</li>
+    </ul>
+
+    <h3>Investigación básica de keywords</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Google autocomplete</strong> — empieza a escribir tu keyword y mira las sugerencias.
+      </li>
+      <li>
+        <strong>"People also ask"</strong> en la SERP — las preguntas reales de la gente.
+      </li>
+      <li>
+        <strong>answerthepublic.com</strong> — agrupa preguntas alrededor de un término.
+      </li>
+      <li>
+        <strong>Google Search Console</strong> — qué búsquedas ya te traen tráfico (datos reales).
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* SEPARADOR: MARKETING                                        */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="marketing-intro" class="subsection subsection-divider">
+    <h2>— Marketing —</h2>
+    <p>
+      Hasta aquí, conseguir que la gente <em>llegue</em>. A partir de aquí, conseguir que la gente
+      que llega <em>haga la acción</em>. SEO sin conversión es tráfico desperdiciado.
+    </p>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* QUÉ CONVIERTE                                               */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="convertir" class="subsection">
+    <h2>Qué hace que una landing convierta</h2>
+    <p>
+      Una landing no es una home: es una página con <strong>un solo objetivo</strong>. Toda decisión
+      (qué se ve, qué no, dónde está el CTA) debe servir a ese objetivo.
+    </p>
+
+    <h3>Las 4 reglas de oro</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Un solo objetivo por landing</strong> — capturar email, agendar demo, comprar. Si tienes
+        dos CTAs distintos peleando, conviertes peor en los dos.
+      </li>
+      <li>
+        <strong>Propuesta de valor en la primera pantalla</strong> — el usuario decide en 5 segundos si
+        se queda. El <code>&lt;h1&gt;</code> debe dejar clarísimo qué haces y para quién.
+      </li>
+      <li>
+        <strong>Reducir fricción</strong> — menos campos en el form, menos clicks hasta convertir, menos
+        distracciones en la página.
+      </li>
+      <li>
+        <strong>Generar confianza rápido</strong> — testimonios, logos, números reales, garantías. La
+        gente compra a quien percibe legítimo.
+      </li>
+    </ul>
+
+    <h3>El test de los 5 segundos</h3>
+    <p>
+      Enseña tu landing 5 segundos a alguien que no conoce el producto y luego pregúntale: ¿qué
+      hacemos?, ¿para quién?, ¿qué tendrías que hacer aquí? Si no lo tiene claro, la propuesta de
+      valor o el CTA no están funcionando.
+    </p>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* ANATOMÍA                                                    */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="anatomia" class="subsection">
+    <h2>Anatomía de una landing que funciona</h2>
+    <p>
+      El orden clásico que funciona en el 90% de los casos. No tienes que tenerlos todos, pero si
+      vas a saltarte alguno, sé consciente de por qué.
+    </p>
+
+    <ol class="bullet-list">
+      <li>
+        <strong>1 · Hero</strong> — propuesta de valor en una frase + subtítulo + CTA principal + un visual
+        fuerte (mockup, screenshot, vídeo corto).
+      </li>
+      <li>
+        <strong>2 · Logos / "trusted by"</strong> — si tienes clientes reconocibles, justo después del
+        hero. Genera confianza inmediata.
+      </li>
+      <li>
+        <strong>3 · Problema</strong> — pinta el dolor que tu producto resuelve. El usuario tiene que
+        pensar "esto me pasa a mí".
+      </li>
+      <li>
+        <strong>4 · Solución</strong> — cómo lo resuelves, en 1-3 ideas clave. No features técnicas, beneficios.
+      </li>
+      <li>
+        <strong>5 · Features destacadas</strong> — las 3-6 más importantes. Con icono + título + descripción
+        corta. Una grid de cards funciona perfecto.
+      </li>
+      <li>
+        <strong>6 · Social proof profundo</strong> — testimonios con cara, nombre y empresa. Mejor que
+        números: historias.
+      </li>
+      <li>
+        <strong>7 · Pricing</strong> (si aplica) — claro, comparable, con el plan recomendado destacado.
+      </li>
+      <li>
+        <strong>8 · FAQ</strong> — anticipa objeciones: precio, alternativas, soporte, cancelación.
+      </li>
+      <li>
+        <strong>9 · CTA final</strong> — repite el CTA principal, ya con todo el contexto que el usuario
+        necesita.
+      </li>
+      <li>
+        <strong>10 · Footer</strong> — legal, contacto, links secundarios.
+      </li>
+    </ol>
+
+    <h3>Variantes según tipo de producto</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>SaaS B2B</strong> — añade demo, integraciones, seguridad/compliance.
+      </li>
+      <li>
+        <strong>Producto físico</strong> — galería, specs, envío, devoluciones.
+      </li>
+      <li>
+        <strong>Lead magnet</strong> (ebook, curso gratuito) — form en hero, lo que vas a recibir, bio
+        del autor.
+      </li>
+      <li>
+        <strong>Evento</strong> — fecha/hora/lugar muy visible, agenda, ponentes, registro.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* CTAs                                                        */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="ctas" class="subsection">
+    <h2>CTAs (call-to-action)</h2>
+    <p>
+      El botón que dispara la conversión. Lo más importante de la landing junto al titular. Lo más
+      retocado en A/B tests por algo.
+    </p>
+
+    <h3>Cómo se escribe un CTA que convierte</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Verbo accionable en primera persona</strong> — "Empezar gratis", "Quiero probarlo", "Reservar
+        mi plaza".
+      </li>
+      <li>
+        <strong>Específico</strong> — "Empezar gratis" &gt; "Registrarme". "Reservar mi demo de 15 min"
+        &gt; "Contactar".
+      </li>
+      <li>
+        <strong>Refuerza el beneficio</strong>, no la acción técnica. "Crear mi primera landing"
+        &gt; "Crear cuenta".
+      </li>
+      <li>
+        <strong>Reduce fricción</strong> con micro-copy debajo: "Sin tarjeta", "Cancela cuando quieras",
+        "Setup en 2 minutos".
+      </li>
+    </ul>
+
+    <h3>Qué NO escribir en un CTA</h3>
+    <ul class="bullet-list">
+      <li><strong>"Enviar"</strong> — vacío de significado.</li>
+      <li><strong>"Click aquí"</strong> — además de inútil, fatal para accesibilidad.</li>
+      <li><strong>"Más información"</strong> — no es un CTA, es una salida.</li>
+      <li><strong>"Submit"</strong> — di en español qué pasa cuando lo pulse.</li>
+    </ul>
+
+    <InteractionHint>Pasa el ratón por encima del CTA para ver el feedback.</InteractionHint>
+
+    <CodeExample
+      title="CTA con micro-copy de soporte"
+      height="160px"
+      html={`<div class="cta-wrap">
+  <button class="cta">Empezar gratis</button>
+  <p class="micro">Sin tarjeta. Cancela cuando quieras.</p>
+</div>`}
+      css={`.cta-wrap {
+  font-family: sans-serif;
+  text-align: center;
+}
+.cta {
+  background: #6dff8a;
+  color: #0d0f0d;
+  padding: 14px 28px;
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -8px #6dff8a;
+}
+.micro {
+  margin: 12px 0 0;
+  color: #8a8a85;
+  font-size: 12px;
+  font-family: monospace;
+}`}
+    />
+
+    <h3>Dónde colocarlos</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Hero</strong> — el principal. Siempre visible above-the-fold.
+      </li>
+      <li>
+        <strong>Tras social proof / features</strong> — para los que ya están casi convencidos.
+      </li>
+      <li>
+        <strong>Final de página</strong> — el que ha leído todo merece la oportunidad de actuar.
+      </li>
+      <li>
+        <strong>CTA sticky en móvil</strong> — botón fijo abajo que sigue al usuario. Para landings largas,
+        sube la conversión.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* SOCIAL PROOF                                                */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="social-proof" class="subsection">
+    <h2>Social proof</h2>
+    <p>
+      El factor de conversión más infravalorado. La gente confía en otra gente, no en lo que tú
+      digas de ti. Cuanto antes en la landing, mejor.
+    </p>
+
+    <h3>Tipos por efectividad</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Caso de estudio con números</strong> — el más potente. "X aumentó conversión un 40% en
+        3 meses". Idealmente con cara, nombre, empresa y cifra real.
+      </li>
+      <li>
+        <strong>Testimonio con foto + nombre + rol</strong> — más creíble que texto suelto. Los sin foto
+        generan dudas.
+      </li>
+      <li>
+        <strong>Logos de clientes</strong> — funciona si son reconocibles ("trusted by X, Y, Z"). Si no
+        lo son, mejor no ponerlos.
+      </li>
+      <li>
+        <strong>Números agregados</strong> — "+10.000 usuarios", "1M de landings creadas". Funciona si
+        son creíbles.
+      </li>
+      <li>
+        <strong>Ratings / reviews</strong> — estrellas de G2, Capterra, Trustpilot.
+      </li>
+      <li>
+        <strong>Badges</strong> — "Producto del día en Product Hunt", "Featured in TechCrunch".
+      </li>
+    </ul>
+
+    <CodeExample
+      title="Testimonial bien estructurado (semánticamente correcto)"
+      height="220px"
+      html={`<figure class="testimonial">
+  <blockquote>
+    <p>"Pasamos de 1.5% a 4.2% de conversión cambiando la landing.
+      El mejor ROI del año."</p>
+  </blockquote>
+  <figcaption>
+    <strong>Marta López</strong>
+    <span>Growth Lead, Acme Inc.</span>
+  </figcaption>
+</figure>`}
+      css={`.testimonial {
+  background: #1c1f23;
+  border-left: 4px solid #6dff8a;
+  padding: 24px;
+  margin: 0;
+  max-width: 480px;
+  font-family: sans-serif;
+  color: #e8e8e3;
+}
+.testimonial blockquote {
+  margin: 0 0 16px;
+}
+.testimonial blockquote p {
+  margin: 0;
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.5;
+}
+.testimonial figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: monospace;
+  font-size: 13px;
+}
+.testimonial figcaption strong { color: #6dff8a; }
+.testimonial figcaption span { color: #8a8a85; }`}
+    />
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Testimonios genéricos</strong> ("¡Muy bueno!", "Lo recomiendo") — no aportan nada. Pide
+        testimonios con un resultado concreto.
+      </li>
+      <li>
+        <strong>Logos sin permiso</strong> — problema legal. Asegúrate de tener autorización.
+      </li>
+      <li>
+        <strong>Números sin contexto</strong> — "10.000 usuarios" sin más es ruido. "10.000 usuarios activos
+        esta semana" tiene fuerza.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* FORMS                                                       */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="forms" class="subsection">
+    <h2>Formularios que convierten</h2>
+    <p>
+      Cada campo extra en un form es un % menos de conversión. La regla: <strong
+        >pide solo lo mínimo viable</strong
+      >. Lo demás, lo enriqueces después.
+    </p>
+
+    <h3>Reglas básicas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Cuanto menos, mejor</strong> — para un lead magnet, email basta. Para una demo, email
+        + nombre + empresa. Nunca pidas teléfono si no es imprescindible.
+      </li>
+      <li>
+        <strong><code>autocomplete</code> bien configurado</strong> — el usuario rellena en 1 tap en móvil.
+        Sin esto, abandonas a la mitad.
+      </li>
+      <li>
+        <strong>Labels visibles</strong>, no placeholders. El usuario olvida qué pedías al empezar a
+        escribir.
+      </li>
+      <li>
+        <strong>Validación inline</strong> — error en cuanto el campo pierde foco, no al hacer submit.
+        Y con texto claro de qué hay que arreglar.
+      </li>
+      <li>
+        <strong>CTA del submit con el beneficio</strong> — "Empezar gratis" en lugar de "Enviar".
+      </li>
+    </ul>
+
+    <h3>Multi-step forms (para forms largos)</h3>
+    <p>
+      Si tienes que pedir muchos campos (ej. registro complejo), divide en pasos con barra de
+      progreso. Convierte mejor que un formulario gigante: cada paso parece pequeño, y al avanzar el
+      usuario se compromete.
+    </p>
+
+    <h3>Trampas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Captcha visible al usuario</strong> — fricción enorme. Usa <strong
+          >Cloudflare Turnstile</strong
+        >, <strong>hCaptcha invisible</strong> o solo cuando detectes bot.
+      </li>
+      <li>
+        <strong>"Confirmar email" duplicando el campo</strong> — destructivo para conversión y para autocomplete.
+        Mejor un solo campo y validar al enviar el welcome email.
+      </li>
+      <li>
+        <strong>Required en exceso</strong> — marca solo lo realmente obligatorio. Si pides teléfono "opcional",
+        déjalo de verdad opcional.
+      </li>
+    </ul>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* MEDICIÓN                                                    */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="medicion" class="subsection">
+    <h2>Medición</h2>
+    <p>
+      Sin datos, optimizas a ciegas. Lo mínimo viable: <strong
+        >una herramienta de analytics + UTMs en todas las campañas + tracking de eventos clave</strong
+      >.
+    </p>
+
+    <h3>Herramientas</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Google Analytics 4</strong> — gratis, completo, pero requiere banner de cookies.
+      </li>
+      <li>
+        <strong>Plausible / Fathom / Simple Analytics</strong> — de pago, privacy-first, sin cookies →
+        sin banner. Suficiente para una landing.
+      </li>
+      <li>
+        <strong>PostHog</strong> — analytics + heatmaps + session replays + feature flags. Plan gratuito
+        generoso.
+      </li>
+      <li>
+        <strong>Microsoft Clarity</strong> — gratis, heatmaps y session replays. Útil complementando a
+        otra de analytics.
+      </li>
+    </ul>
+
+    <h3>Eventos que debes trackear</h3>
+    <ul class="bullet-list">
+      <li>
+        <code>cta_click</code> — qué CTA se pulsó (con propiedad <code>location: hero</code>,
+        <code>pricing</code>, <code>final</code>).
+      </li>
+      <li>
+        <code>form_submit</code> / <code>form_error</code> — tasas de conversión y dónde se atascan.
+      </li>
+      <li>
+        <code>scroll_depth</code> — 25%, 50%, 75%, 100%. ¿Lee la gente hasta el CTA final?
+      </li>
+      <li>
+        <code>outbound_click</code> — clicks a otras webs (testimonios, social).
+      </li>
+    </ul>
+
+    <h3>UTMs (Urchin Tracking Module)</h3>
+    <p>
+      Parámetros en la URL para saber de dónde viene cada visita. Imprescindibles para campañas.
+    </p>
+
+    <CodeExample
+      title="UTM típica de una campaña"
+      showCss={false}
+      html={`https://miweb.com/precios
+  ?utm_source=twitter
+  &utm_medium=social
+  &utm_campaign=launch-q1
+  &utm_content=hilo-post-1`}
+    />
+
+    <ul class="bullet-list">
+      <li><code>utm_source</code> — dónde viene (twitter, newsletter, google-ads).</li>
+      <li><code>utm_medium</code> — tipo de canal (social, email, cpc, organic).</li>
+      <li><code>utm_campaign</code> — nombre de la campaña.</li>
+      <li><code>utm_content</code> / <code>utm_term</code> — variante o keyword.</li>
+    </ul>
+
+    <h3>A/B testing</h3>
+    <p>
+      Probar dos versiones de algo (titular, CTA, color) y ver cuál convierte mejor. Herramientas:
+      <strong>Google Optimize (cerrado, busca alternativa)</strong>, <strong>VWO</strong>,
+      <strong>PostHog Experiments</strong>, <strong>Vercel Edge Config</strong>. Para landings
+      pequeñas, suele tener más impacto cuidar la calidad que A/B testear.
+    </p>
+  </section>
+
+  {/* ─────────────────────────────────────────────────────────── */}
+  {/* PRIVACY                                                     */}
+  {/* ─────────────────────────────────────────────────────────── */}
+  <section id="privacy" class="subsection">
+    <h2>Privacy &amp; consentimiento</h2>
+    <p>
+      En la UE, capturar datos personales (incluyendo analytics con cookies) requiere cumplir
+      <strong>GDPR</strong> (datos personales) y <strong>LSSI</strong> (cookies). En España la AEPD es
+      muy estricta. Saltarse esto puede costar multas serias.
+    </p>
+
+    <h3>Qué necesitas como mínimo</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>Política de privacidad</strong> accesible desde el footer. Explica qué datos recoges,
+        para qué, base legal, derechos del usuario.
+      </li>
+      <li>
+        <strong>Aviso legal</strong> (LSSI) — identidad de la empresa o persona detrás de la web.
+      </li>
+      <li>
+        <strong>Política de cookies</strong> — qué cookies usas y para qué.
+      </li>
+      <li>
+        <strong>Banner de cookies</strong> con opciones reales (no solo "Aceptar"). Imprescindible botón
+        "Rechazar" tan visible como "Aceptar".
+      </li>
+    </ul>
+
+    <h3>Cómo evitar el banner de cookies</h3>
+    <p>
+      Si <strong>no</strong> usas cookies o tracking no esencial, no tienes que poner banner. Es la mejor
+      UX. Cómo:
+    </p>
+    <ul class="bullet-list">
+      <li>
+        Analytics sin cookies: <strong>Plausible</strong>, <strong>Fathom</strong>, <strong
+          >Simple Analytics</strong
+        >.
+      </li>
+      <li>
+        Embeds en modo "no-cookies": YouTube tiene <code>youtube-nocookie.com</code>.
+      </li>
+      <li>
+        Self-host de fuentes en lugar de Google Fonts (Google Fonts servidas desde Google
+        técnicamente comparten IP del usuario).
+      </li>
+      <li>Sin píxeles de Meta/TikTok/etc.</li>
+    </ul>
+
+    <h3>Dark patterns que evitar (ilegales en la UE)</h3>
+    <ul class="bullet-list">
+      <li>
+        <strong>"Aceptar" más grande/colorido que "Rechazar"</strong> — la AEPD ya ha multado por esto.
+      </li>
+      <li>
+        <strong>"Continuar leyendo" implica aceptar</strong> — necesitas consentimiento afirmativo explícito.
+      </li>
+      <li>
+        <strong>Esconder "Rechazar"</strong> dos clicks adentro.
+      </li>
+      <li>
+        <strong>Pre-marcar checkboxes</strong> de consentimiento.
+      </li>
+    </ul>
+
+    <h3>Consent Mode v2 (Google)</h3>
+    <p>
+      Si usas Google Analytics o Google Ads, Google exige Consent Mode v2 desde 2024 para sitios en
+      la UE. Permite que GA reciba señales aunque el usuario rechace cookies (modelado estadístico).
+      Las plataformas de consent banner (<strong>Cookiebot</strong>,
+      <strong>Iubenda</strong>, <strong>Termly</strong>) lo configuran solo.
+    </p>
+  </section>
+</SectionLayout>
+
+<style>
+  .subsection-divider h2 {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    text-align: center;
+    margin-block: var(--space-12);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .subsection-divider p {
+    text-align: center;
+    max-width: 580px;
+    margin-inline: auto;
+  }
+</style>
